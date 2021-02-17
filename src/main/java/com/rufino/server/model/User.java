@@ -32,8 +32,9 @@ public class User {
 
     @Id
     private UUID userId;
-
+    
     @EmailConstraint
+    @Column(nullable = false)
     private String userEmail;
 
     @NotBlank(message = "Value should not be empty")

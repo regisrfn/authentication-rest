@@ -61,7 +61,7 @@ public class PostRequestTests {
     }
 
     @Test
-    void itShouldNotSaveUser() throws Exception {
+    void itShouldNotSaveUser_invalidEmailFormat() throws Exception {
         JSONObject my_obj = new JSONObject();
 
         my_obj.put("userNickname", "joe123");

@@ -96,7 +96,7 @@ public class UserService {
         if (user == null)
             throw new ApiRequestException("Authentication failed", HttpStatus.FORBIDDEN);
         authService.verifyPassword(user.getUserPassword(), password);
-        user.setToken(authService.createToken());
+        user.setToken(authService.createToken(user));
         return user;
     }
 }

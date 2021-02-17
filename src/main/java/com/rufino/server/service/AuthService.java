@@ -1,10 +1,10 @@
 package com.rufino.server.service;
 
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.rufino.server.exception.ApiRequestException;
-import com.rufino.server.model.Token;
+import com.rufino.server.model.JwtToken;
+import com.rufino.server.model.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,18 +14,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
 
-    private JWTVerifier verifier;
-    private Token token;
+    private JwtToken jwt;
 
     @Autowired
-    public AuthService(JWTVerifier verifier, Token token) {
-        this.verifier = verifier;
-        this.token = token;
+    public AuthService(JwtToken jwt) {
+        this.jwt = jwt;
     }
 
-    public String createToken() {
+    public String createToken(User user) {
         try {
-            return this.token.getToken();
+            return this.jwt.generateToken(user);
         } catch (JWTCreationException exception) {
             // Invalid Signing configuration / Couldn't convert Claims.
             throw new ApiRequestException(
@@ -33,9 +31,9 @@ public class AuthService {
         }
     }
 
-    public void verifyToken(String token) {
+    public void verifyToken(String token, User user) {
         try {
-            verifier.verify(token);
+            this.jwt.isTokenValid(user.getUserNickname(),token);
         } catch (JWTVerificationException e) {
             throw new ApiRequestException("Could not verify token");
         }

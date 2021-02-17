@@ -40,7 +40,7 @@ public class UserController {
     @PostMapping("register")
     public ResponseEntity<Object> saveUser(@Valid @RequestBody User user) {
         User userSaved = userService.saveUser(user);
-        userSaved.setToken(authentication.createToken());
+        userSaved.setToken(authentication.createToken(user));
         return new ResponseEntity<>(userSaved, HttpStatus.OK);
     }
 

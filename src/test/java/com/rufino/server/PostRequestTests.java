@@ -55,7 +55,7 @@ public class PostRequestTests {
                 .andReturn();
 
         User response = objectMapper.readValue(result.getResponse().getContentAsString(), User.class);
-        authService.verifyToken(response.getToken());
+        authService.verifyToken(response.getToken(),response);;
         assertThat(response.getUserNickname()).isEqualTo("joe123");
         assertThat(response.getUserEmail()).isEqualTo("joe@gmail.com");
     }

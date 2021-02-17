@@ -69,7 +69,7 @@ public class PostRequestTests {
 
         mockMvc.perform(
                 post("/api/v1/user/register").contentType(MediaType.APPLICATION_JSON).content(my_obj.toString()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.userEmail", Is.is("Value should not be empty")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.userEmail", Is.is("Invalid email format")))
                 .andExpect(status().isBadRequest()).andReturn();
 
         my_obj.put("userEmail", "joegmail.com");

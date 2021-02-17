@@ -6,7 +6,6 @@ import java.util.UUID;
 import com.rufino.server.dao.UserDao;
 import com.rufino.server.exception.ApiRequestException;
 import com.rufino.server.model.User;
-import com.rufino.server.validation.ValidateEmail;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,12 +16,10 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private UserDao userDao;
-    private ValidateEmail validateEmail;
     private AuthService authService;
 
     @Autowired
-    public UserService(UserDao userDao, ValidateEmail validateEmail, AuthService authService) {
-        this.validateEmail = validateEmail;
+    public UserService(UserDao userDao, AuthService authService) {
         this.userDao = userDao;
         this.authService = authService;
     }
@@ -30,11 +27,10 @@ public class UserService {
     public User saveUser(User user) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String hashedPassword = passwordEncoder.encode(user.getUserPassword());
+        
         user.setUserPassword(hashedPassword);
-        if (!validateEmail.test(user.getUserEmail()))
-            throw new ApiRequestException("Invalid email format", "userEmail", HttpStatus.BAD_REQUEST);
-
         User savedUser = userDao.insertUser(user);
+        
         savedUser.setUserPassword(null);
         savedUser.setCreatedAt(null);
         return savedUser;

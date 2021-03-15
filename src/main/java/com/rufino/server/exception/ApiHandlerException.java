@@ -5,8 +5,8 @@ import static com.rufino.server.constant.ExceptionConst.EMAIL_NOT_AVAILABLE;
 import static com.rufino.server.constant.ExceptionConst.INTERNAL_SERVER_ERROR_MSG;
 import static com.rufino.server.constant.ExceptionConst.USERNAME_NOT_AVAILABLE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,16 +16,19 @@ import com.rufino.server.exception.domain.InvalidTokenException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 @ControllerAdvice
-public class ApiHandlerException {
+public class ApiHandlerException implements ErrorController{
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    public static final String ERROR_PATH = "/error";
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpResponse> internalServerErrorException(Exception exception) {
@@ -58,6 +61,12 @@ public class ApiHandlerException {
     @ExceptionHandler(value = { DataIntegrityViolationException.class })
     public ResponseEntity<HttpResponse> handleDBException(DataIntegrityViolationException e) {
         return handleSqlError(e);
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<HttpResponse> noHandlerFoundException(NoHandlerFoundException e) {
+        LOGGER.error(e.getMessage());
+        return createHttpResponse(BAD_REQUEST, "There is no mapping for this URL");
     }
 
     ///////////////////////////// PRIVATE //////////////////////////////////////
@@ -98,6 +107,11 @@ public class ApiHandlerException {
         }
 
         return response;
+    }
+
+    @Override
+    public String getErrorPath() {
+        return ERROR_PATH;
     }
 
 }

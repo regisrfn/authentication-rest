@@ -3,7 +3,7 @@ package com.rufino.server.service;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.rufino.server.exception.ApiRequestException;
-import com.rufino.server.model.JwtToken;
+import com.rufino.server.domain.JwtToken;
 import com.rufino.server.model.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class AuthService {
 
     public void verifyToken(String token, User user) {
         try {
-            this.jwt.isTokenValid(user.getUserNickname(),token);
+            this.jwt.isTokenValid(user.getUsername(), token);
         } catch (JWTVerificationException e) {
             throw new ApiRequestException("Could not verify token");
         }

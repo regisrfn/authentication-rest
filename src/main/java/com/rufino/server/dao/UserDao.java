@@ -16,7 +16,7 @@ public interface UserDao {
 
     User getUserByEmail(String email);
 
-    User getUserByNickname(String nickname);
+    User getUserByUsername(String username);
 
     User updateUser(UUID id, User User);
 }

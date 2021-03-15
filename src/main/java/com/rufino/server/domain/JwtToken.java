@@ -1,4 +1,4 @@
-package com.rufino.server.model;
+package com.rufino.server.domain;
 
 import static com.rufino.server.security.SecurityConst.EXPIRATION_TIME;
 import static com.rufino.server.security.SecurityConst.RUFINO_LLC;
@@ -8,6 +8,7 @@ import java.util.Date;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.rufino.server.model.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,7 +38,7 @@ public class JwtToken {
     public String generateToken(User user) {
         Date currentDate = new Date();
         return JWT.create().withIssuedAt(currentDate).withIssuer(RUFINO_LLC)
-                .withSubject(user.getUserNickname())
+                .withSubject(user.getUsername())
                 .withExpiresAt(new Date(currentDate.getTime() + EXPIRATION_TIME)).sign(this.algorithm);
     }
 

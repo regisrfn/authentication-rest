@@ -56,11 +56,11 @@ public class UserRepository implements UserDao {
 
     @Override
     public User getUserByEmail(String email) {
-        return jpaDataAccess.findByUserEmail(email);
+        return jpaDataAccess.findByEmail(email);
     }
 
     @Override
-    public User getUserByNickname(String nickname) {
-        return jpaDataAccess.findByUserNickname(nickname);
+    public User getUserByUsername(String username) {
+        return jpaDataAccess.findByUsername(username);
     }
 }

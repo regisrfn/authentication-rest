@@ -57,9 +57,9 @@ public class ApiHandlerException {
         Map<String, String> errors = new HashMap<>();
 
         if (error.equals("uk_user_email"))
-            errors.put("customerEmail", "Email not available");
+            errors.put("email", "Email not available");
         if (error.equals("uk_user_nickname"))
-            errors.put("customerEmail", "Email not available");
+            errors.put("email", "Email not available");
 
         return errors;
     }

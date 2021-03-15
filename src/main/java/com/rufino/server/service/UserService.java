@@ -26,12 +26,12 @@ public class UserService {
 
     public User saveUser(User user) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String hashedPassword = passwordEncoder.encode(user.getUserPassword());
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
         
-        user.setUserPassword(hashedPassword);
+        user.setPassword(hashedPassword);
         User savedUser = userDao.insertUser(user);
         
-        savedUser.setUserPassword(null);
+        savedUser.setPassword(null);
         savedUser.setCreatedAt(null);
         return savedUser;
     }
@@ -84,8 +84,8 @@ public class UserService {
         return user;
     }
 
-    public User getUserByNickname(String nickname) {
-        User user = userDao.getUserByNickname(nickname);
+    public User getUserByNickname(String username) {
+        User user = userDao.getUserByUsername(username);
         if (user == null)
             throw new ApiRequestException("User not found", HttpStatus.NOT_FOUND);
         return user;
@@ -95,7 +95,7 @@ public class UserService {
         User user = userDao.getUserByEmail(email);
         if (user == null)
             throw new ApiRequestException("Authentication failed", HttpStatus.FORBIDDEN);
-        authService.verifyPassword(user.getUserPassword(), password);
+        authService.verifyPassword(user.getPassword(),password);
         user.setToken(authService.createToken(user));
         return user;
     }

@@ -24,8 +24,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = "userEmail", name = "uk_user_email"),
-        @UniqueConstraint(columnNames = "userNickname", name = "uk_user_nickname") })
+@Table(name = "users", uniqueConstraints = { 
+        @UniqueConstraint(columnNames = "email", name = "uk_user_email"),
+        @UniqueConstraint(columnNames = "username", name = "uk_user_username") 
+})
 
 @JsonInclude(Include.NON_NULL)
 public class User {
@@ -35,17 +37,17 @@ public class User {
     
     @EmailConstraint
     @Column(nullable = false)
-    private String userEmail;
+    private String email;
 
     @NotBlank(message = "Value should not be empty")
     @Column(nullable = false)
-    private String userNickname, userPassword;
+    private String username, password;
 
     @NotNull(message = "Value should not be empty")
     @Column(columnDefinition = "timestamp with time zone")
     private ZonedDateTime createdAt;
 
-    private UUID userInfo;
+    private UUID info;
 
     @Transient
     private String token;

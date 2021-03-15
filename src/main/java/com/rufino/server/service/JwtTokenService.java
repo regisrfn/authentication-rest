@@ -6,7 +6,7 @@ public interface JwtTokenService {
 
     public String createToken(User user);
 
-    public void verifyToken(String token, String username);
+    public boolean verifyToken(String token, String username);
 
     public void verifyPassword(String hashedPassword, String password);
 

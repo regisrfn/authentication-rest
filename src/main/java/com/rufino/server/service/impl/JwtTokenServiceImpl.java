@@ -47,9 +47,9 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     }
 
     @Override
-    public void verifyToken(String token, String username) {
+    public boolean verifyToken(String token, String username) {
         try {
-            this.jwt.isTokenValid(username, token);
+            return this.jwt.isTokenValid(username, token);
         } catch (JWTVerificationException e) {
             throw new ApiRequestException("Could not verify token", HttpStatus.FORBIDDEN);
         }

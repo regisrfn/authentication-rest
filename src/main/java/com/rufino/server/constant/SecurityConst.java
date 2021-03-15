@@ -1,4 +1,4 @@
-package com.rufino.server.security;
+package com.rufino.server.constant;
 
 import java.util.concurrent.TimeUnit;
 

@@ -1,7 +1,7 @@
 package com.rufino.server.domain;
 
-import static com.rufino.server.security.SecurityConst.EXPIRATION_TIME;
-import static com.rufino.server.security.SecurityConst.RUFINO_LLC;
+import static com.rufino.server.constant.SecurityConst.EXPIRATION_TIME;
+import static com.rufino.server.constant.SecurityConst.RUFINO_LLC;
 
 import java.util.Date;
 

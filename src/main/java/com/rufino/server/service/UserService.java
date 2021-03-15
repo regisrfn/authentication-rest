@@ -27,10 +27,10 @@ public class UserService {
     public User saveUser(User user) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String hashedPassword = passwordEncoder.encode(user.getPassword());
-        
+
         user.setPassword(hashedPassword);
         User savedUser = userDao.insertUser(user);
-        
+
         savedUser.setPassword(null);
         savedUser.setCreatedAt(null);
         return savedUser;
@@ -71,9 +71,6 @@ public class UserService {
             return userDao.updateUser(userId, user);
         } catch (IllegalArgumentException e) {
             throw new ApiRequestException("Invalid User UUID format", HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ApiRequestException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -95,7 +92,7 @@ public class UserService {
         User user = userDao.getUserByEmail(email);
         if (user == null)
             throw new ApiRequestException("Authentication failed", HttpStatus.FORBIDDEN);
-        authService.verifyPassword(user.getPassword(),password);
+        authService.verifyPassword(user.getPassword(), password);
         user.setToken(authService.createToken(user));
         return user;
     }

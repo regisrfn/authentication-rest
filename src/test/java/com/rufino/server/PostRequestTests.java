@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.rufino.server.constant.ExceptionConst;
 import com.rufino.server.model.User;
-import com.rufino.server.service.AuthService;
+import com.rufino.server.service.JwtTokenService;
 
 import org.hamcrest.core.Is;
 import org.json.JSONObject;
@@ -32,7 +32,7 @@ public class PostRequestTests {
         @Autowired
         private MockMvc mockMvc;
         @Autowired
-        private AuthService authService;
+        private JwtTokenService jwtTokenService;
 
         private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
@@ -56,7 +56,7 @@ public class PostRequestTests {
                                 .andExpect(status().isOk()).andReturn();
 
                 User response = objectMapper.readValue(result.getResponse().getContentAsString(), User.class);
-                authService.verifyToken(response.getToken(), response);
+                jwtTokenService.verifyToken(response.getToken(), response.getUsername());
                 ;
                 assertThat(response.getUsername()).isEqualTo("joe123");
                 assertThat(response.getEmail()).isEqualTo("joe@gmail.com");

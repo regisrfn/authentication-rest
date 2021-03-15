@@ -46,6 +46,11 @@ public class JwtToken {
         return StringUtils.hasText(username) && verifyJwtToken(token);
     }
 
+    public String getSubject(String jwt){
+        JWTVerifier verifier = getVerifier();
+        return verifier.verify(jwt).getSubject();
+    }
+
 
     ////////////////////////////PRIVATE////////////////
     private boolean verifyJwtToken(String token) {
@@ -53,5 +58,7 @@ public class JwtToken {
         Date expiration = verifier.verify(token).getExpiresAt();
         return expiration.before(new Date());
     }
+
+    
 
 }

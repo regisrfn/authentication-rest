@@ -16,12 +16,12 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private UserDao userDao;
-    private AuthService authService;
+    private JwtTokenService jwtTokenService;
 
     @Autowired
-    public UserService(UserDao userDao, AuthService authService) {
+    public UserService(UserDao userDao, JwtTokenService jwtTokenService) {
         this.userDao = userDao;
-        this.authService = authService;
+        this.jwtTokenService = jwtTokenService;
     }
 
     public User saveUser(User user) {
@@ -92,8 +92,8 @@ public class UserService {
         User user = userDao.getUserByEmail(email);
         if (user == null)
             throw new ApiRequestException("Authentication failed", HttpStatus.FORBIDDEN);
-        authService.verifyPassword(user.getPassword(), password);
-        user.setToken(authService.createToken(user));
+        jwtTokenService.verifyPassword(user.getPassword(), password);
+        user.setToken(jwtTokenService.createToken(user));
         return user;
     }
 }

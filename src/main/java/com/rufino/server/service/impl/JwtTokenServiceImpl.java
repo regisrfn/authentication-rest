@@ -5,7 +5,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.rufino.server.exception.ApiRequestException;
 import com.rufino.server.domain.JwtToken;
 import com.rufino.server.model.User;
-import com.rufino.server.service.AuthService;
+import com.rufino.server.service.JwtTokenService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,15 +13,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthServiceImpl implements AuthService {
+public class JwtTokenServiceImpl implements JwtTokenService {
 
     private JwtToken jwt;
 
     @Autowired
-    public AuthServiceImpl(JwtToken jwt) {
+    public JwtTokenServiceImpl(JwtToken jwt) {
         this.jwt = jwt;
     }
 
+    @Override
     public String createToken(User user) {
         try {
             return this.jwt.generateToken(user);
@@ -32,20 +33,26 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-    public void verifyToken(String token, User user) {
-        try {
-            this.jwt.isTokenValid(user.getUsername(), token);
-        } catch (JWTVerificationException e) {
-            throw new ApiRequestException("Could not verify token", HttpStatus.FORBIDDEN);
-        }
-
-    }
-
+    @Override
     public void verifyPassword(String hashedPassword, String password) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         boolean ok = passwordEncoder.matches(password, hashedPassword);
         if (!ok)
             throw new ApiRequestException("Username / password incorrect. Please try again", HttpStatus.FORBIDDEN);
+    }
+
+    @Override
+    public String getUsername(String token) {
+        return jwt.getSubject(token);
+    }
+
+    @Override
+    public void verifyToken(String token, String username) {
+        try {
+            this.jwt.isTokenValid(username, token);
+        } catch (JWTVerificationException e) {
+            throw new ApiRequestException("Could not verify token", HttpStatus.FORBIDDEN);
+        }
     }
 
 }

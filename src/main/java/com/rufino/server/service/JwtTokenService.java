@@ -2,12 +2,14 @@ package com.rufino.server.service;
 
 import com.rufino.server.model.User;
 
-public interface AuthService {
+public interface JwtTokenService {
 
     public String createToken(User user);
 
-    public void verifyToken(String token, User user);
+    public void verifyToken(String token, String username);
 
     public void verifyPassword(String hashedPassword, String password);
+
+    String getUsername(String token);
 
 }

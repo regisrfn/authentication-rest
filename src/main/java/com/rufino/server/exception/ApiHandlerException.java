@@ -6,11 +6,13 @@ import static com.rufino.server.constant.ExceptionConst.INTERNAL_SERVER_ERROR_MS
 import static com.rufino.server.constant.ExceptionConst.USERNAME_NOT_AVAILABLE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.rufino.server.domain.HttpResponse;
+import com.rufino.server.exception.domain.InvalidTokenException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +26,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ApiHandlerException {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-    
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpResponse> internalServerErrorException(Exception exception) {
         LOGGER.error(exception.getMessage());
@@ -45,6 +47,12 @@ public class ApiHandlerException {
             errors.put(fieldName, errorMessage);
         });
         return createHttpResponse(BAD_REQUEST, BAD_REQUEST_MSG, errors);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<HttpResponse> InvalidTokenErrorException(InvalidTokenException exception) {
+        LOGGER.error(exception.getMessage());
+        return createHttpResponse(FORBIDDEN, exception.getMessage());
     }
 
     @ExceptionHandler(value = { DataIntegrityViolationException.class })

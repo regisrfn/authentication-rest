@@ -9,10 +9,14 @@ public class ExceptionConst {
     public static final String ACCOUNT_DISABLED = "Your account has been disabled. If this is an error, please contact administration";
     public static final String ERROR_PROCESSING_FILE = "Error occurred while processing file";
     public static final String NOT_ENOUGH_PERMISSION = "You do not have enough permission";
+    
     public static final String EMAIL_NOT_AVAILABLE = "Email has already been taken";
     public static final String USERNAME_NOT_AVAILABLE = "Username has already been taken";
+    
     public static final String INVALID_EMAIL_FORMAT = "Invalid email address";
     public static final String INVALID_USERNAME_FORMAT = "Please enter a valid username";
-    public static final String INVALID_PASSWORD_FORMAT = "Please enter a valid password";   
-
+    public static final String INVALID_PASSWORD_FORMAT = "Please enter a valid password";
+    
+    public static final String BAD_REQUEST_MSG = "Request contains invalid fields";
+    
 }

@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
+import com.rufino.server.constant.ExceptionConst;
 import com.rufino.server.validation.EmailValidator;
 
 @Documented
@@ -16,7 +17,7 @@ import com.rufino.server.validation.EmailValidator;
 @Target( { ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EmailConstraint {
-    String message() default "Invalid email format";
+    String message() default ExceptionConst.INVALID_EMAIL_FORMAT;
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

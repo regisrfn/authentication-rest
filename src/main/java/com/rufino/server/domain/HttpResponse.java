@@ -31,6 +31,17 @@ public class HttpResponse {
         this.timestamp = ZonedDateTime.now(ZoneId.of("Z"));
     }
 
+    public HttpResponse(int httpStatusCode, HttpStatus httpStatus, String reason, String message,
+            Map<String, String> errors) {
+
+        this.httpStatusCode = httpStatusCode;
+        this.httpStatus = httpStatus;
+        this.message = message;
+        this.reason = reason;
+        this.timestamp = ZonedDateTime.now(ZoneId.of("Z"));
+        this.errors = errors;
+    }
+
     public HttpResponse() {
         this.timestamp = ZonedDateTime.now(ZoneId.of("Z"));
     }

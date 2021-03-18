@@ -40,6 +40,11 @@ public class UserController {
         return new ResponseEntity<>(userSaved, HttpStatus.OK);
     }
 
+    @PostMapping("login")
+    public ResponseEntity<User> login(@RequestBody User user) {
+        return userService.login(user);
+    }
+
     @GetMapping("get")
     public List<User> getAllUsers() {
         return userService.getAllUsers();

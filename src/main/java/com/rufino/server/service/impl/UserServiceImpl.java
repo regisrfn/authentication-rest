@@ -1,16 +1,23 @@
 package com.rufino.server.service.impl;
 
+import static com.rufino.server.constant.SecurityConst.JWT_TOKEN_HEADER;
+
 import java.util.List;
 import java.util.UUID;
 
 import com.rufino.server.dao.UserDao;
 import com.rufino.server.exception.ApiRequestException;
+import com.rufino.server.exception.domain.InvalidCredentialsException;
 import com.rufino.server.model.User;
+import com.rufino.server.service.JwtTokenService;
 import com.rufino.server.service.SecurityService;
 import com.rufino.server.service.UserService;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,11 +25,13 @@ public class UserServiceImpl implements UserService {
 
     private UserDao userDao;
     private SecurityService securityService;
+    private JwtTokenService jwtTokenService;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, SecurityService securityService) {
+    public UserServiceImpl(UserDao userDao, SecurityService securityService, JwtTokenService jwtTokenService) {
         this.userDao = userDao;
         this.securityService = securityService;
+        this.jwtTokenService = jwtTokenService;
     }
 
     @Override
@@ -31,6 +40,30 @@ public class UserServiceImpl implements UserService {
         User savedUser = userDao.insertUser(user);
         savedUser.setPassword(null);
         return savedUser;
+    }
+
+    @Override
+    public ResponseEntity<User> login(User loginUser) {
+        User user = null;
+
+        if (StringUtils.isNotBlank(loginUser.getUsername())) {
+            user = userDao.getUserByUsername(loginUser.getUsername());
+        } else if (StringUtils.isBlank(loginUser.getEmail()))
+            throw new InvalidCredentialsException();
+        else {
+            user = userDao.getUserByEmail(loginUser.getEmail());
+        }
+
+        if (user == null)
+            throw new InvalidCredentialsException();
+
+        authenticate(loginUser.getPassword(), user.getPassword());
+        HttpHeaders jwtHeaders = getJwtHeader(user);
+        return new ResponseEntity<>(user, jwtHeaders, HttpStatus.OK);
+    }
+
+    private void authenticate(String password, String hashedPassword) {
+        securityService.verifyPassword(password, hashedPassword);
     }
 
     @Override
@@ -91,17 +124,14 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    @Override
-    public User login(String email, String password) {
-        User user = userDao.getUserByEmail(email);
-        if (user == null)
-            throw new ApiRequestException("Authentication failed", HttpStatus.FORBIDDEN);
-        securityService.verifyPassword(user.getPassword(), password);
-        return user;
-    }
-
     private void encodePassword(User user) {
         String hashedPassword = securityService.encodePassword(user.getPassword());
         user.setPassword(hashedPassword);
+    }
+
+    private HttpHeaders getJwtHeader(User user) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(JWT_TOKEN_HEADER, jwtTokenService.createToken(user));
+        return headers;
     }
 }

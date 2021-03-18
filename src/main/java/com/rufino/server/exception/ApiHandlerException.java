@@ -1,17 +1,14 @@
 package com.rufino.server.exception;
 
-import static com.rufino.server.constant.ExceptionConst.BAD_REQUEST_MSG;
-import static com.rufino.server.constant.ExceptionConst.EMAIL_NOT_AVAILABLE;
-import static com.rufino.server.constant.ExceptionConst.INTERNAL_SERVER_ERROR_MSG;
-import static com.rufino.server.constant.ExceptionConst.USERNAME_NOT_AVAILABLE;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static com.rufino.server.constant.ExceptionConst.*;
+import static org.springframework.http.HttpStatus.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.rufino.server.domain.HttpResponse;
+import com.rufino.server.exception.domain.AccountDisabledException;
+import com.rufino.server.exception.domain.AccountLockedException;
 import com.rufino.server.exception.domain.InvalidCredentialsException;
 import com.rufino.server.exception.domain.InvalidTokenException;
 
@@ -72,6 +69,16 @@ public class ApiHandlerException implements ErrorController {
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<HttpResponse> BadCredentialsException(InvalidCredentialsException e) {
         return createHttpResponse(BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(AccountDisabledException.class)
+    public ResponseEntity<HttpResponse> AccountDisabledErrorException(AccountDisabledException exception) {
+        return createHttpResponse(UNAUTHORIZED, exception.getMessage());
+    }
+
+    @ExceptionHandler(AccountLockedException.class)
+    public ResponseEntity<HttpResponse> AccountLockedErrorException(AccountLockedException exception) {
+        return createHttpResponse(UNAUTHORIZED, exception.getMessage());
     }
 
     ///////////////////////////// PRIVATE //////////////////////////////////////

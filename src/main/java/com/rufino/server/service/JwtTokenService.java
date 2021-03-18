@@ -8,8 +8,6 @@ public interface JwtTokenService {
 
     public boolean verifyToken(String token, String username);
 
-    public void verifyPassword(String hashedPassword, String password);
-
     String getUsername(String token);
 
 }

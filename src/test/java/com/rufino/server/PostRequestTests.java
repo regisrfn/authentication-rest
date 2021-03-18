@@ -38,6 +38,7 @@ public class PostRequestTests {
 
         @BeforeEach
         void clearTable() {
+                jdbcTemplate.update("DELETE FROM users_authority_list");
                 jdbcTemplate.update("DELETE FROM users");
         }
 
@@ -78,12 +79,14 @@ public class PostRequestTests {
         void itShouldNotSaveUser_emailAlreadyExists() throws Exception {
                 JSONObject my_obj = new JSONObject();
 
-                my_obj.put("username", "joe123");
+                saveUserAndCheck(my_obj);
+
+                my_obj = new JSONObject();
+                my_obj.put("firstName", "John");
+                my_obj.put("lastName", "Doe");
+                my_obj.put("username", "joe1234");
                 my_obj.put("password", "secret123");
                 my_obj.put("email", "joe@gmail.com");
-
-                mockMvc.perform(post("/api/v1/user/register").contentType(MediaType.APPLICATION_JSON)
-                                .content(my_obj.toString())).andExpect(status().isOk()).andReturn();
 
                 mockMvc.perform(post("/api/v1/user/register").contentType(MediaType.APPLICATION_JSON)
                                 .content(my_obj.toString()))
@@ -113,6 +116,8 @@ public class PostRequestTests {
         }
 
         private MvcResult saveUserAndCheck(JSONObject my_obj) throws JSONException, Exception {
+                my_obj.put("firstName", "John");
+                my_obj.put("lastName", "Doe");
                 my_obj.put("username", "joe123");
                 my_obj.put("password", "secret123");
                 my_obj.put("email", "joe@gmail.com");

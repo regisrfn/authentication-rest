@@ -24,15 +24,10 @@ public class UserService {
         this.jwtTokenService = jwtTokenService;
     }
 
-    public User saveUser(User user) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String hashedPassword = passwordEncoder.encode(user.getPassword());
-
-        user.setPassword(hashedPassword);
+    public User register(User user) {
+        encodePassword(user);
         User savedUser = userDao.insertUser(user);
-
         savedUser.setPassword(null);
-        savedUser.setCreatedAt(null);
         return savedUser;
     }
 
@@ -93,7 +88,12 @@ public class UserService {
         if (user == null)
             throw new ApiRequestException("Authentication failed", HttpStatus.FORBIDDEN);
         jwtTokenService.verifyPassword(user.getPassword(), password);
-        user.setToken(jwtTokenService.createToken(user));
         return user;
+    }
+
+    private void encodePassword(User user) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(hashedPassword);
     }
 }

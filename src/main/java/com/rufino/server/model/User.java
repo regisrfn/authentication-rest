@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -48,9 +47,6 @@ public class User {
     private ZonedDateTime createdAt;
 
     private UUID info;
-
-    @Transient
-    private String token;
 
     public User() {
         setUserId(UUID.randomUUID());

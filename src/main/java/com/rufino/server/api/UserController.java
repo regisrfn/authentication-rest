@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import com.rufino.server.model.User;
-import com.rufino.server.service.JwtTokenService;
 import com.rufino.server.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,18 +28,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private UserService userService;
-    private JwtTokenService jwtTokenService;
 
     @Autowired
-    public UserController(UserService userService, JwtTokenService jwtTokenService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.jwtTokenService = jwtTokenService;
     }
 
     @PostMapping("register")
     public ResponseEntity<Object> saveUser(@Valid @RequestBody User user) {
-        User userSaved = userService.saveUser(user);
-        userSaved.setToken(jwtTokenService.createToken(user));
+        User userSaved = userService.register(user);
         return new ResponseEntity<>(userSaved, HttpStatus.OK);
     }
 

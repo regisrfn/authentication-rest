@@ -31,17 +31,6 @@ public class ApiHandlerException implements ErrorController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     public static final String ERROR_PATH = "/error";
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<HttpResponse> internalServerErrorException(Exception exception) {
-        LOGGER.error(exception.getMessage());
-        return createHttpResponse(INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
-    }
-
-    @ExceptionHandler(value = { ApiRequestException.class })
-    public ResponseEntity<HttpResponse> handleApiRequestException(ApiRequestException e) {
-        return createHttpResponse(e.getHttpStatus(), e.getMessage());
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<HttpResponse> handleValidationExceptions(MethodArgumentNotValidException e) {
         Map<String, String> errors = new HashMap<>();
@@ -53,9 +42,19 @@ public class ApiHandlerException implements ErrorController {
         return createHttpResponse(BAD_REQUEST, BAD_REQUEST_MSG, errors);
     }
 
+    @ExceptionHandler(value = { ApiRequestException.class })
+    public ResponseEntity<HttpResponse> handleApiRequestException(ApiRequestException e) {
+        return createHttpResponse(e.getHttpStatus(), e.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<HttpResponse> internalServerErrorException(Exception exception) {
+        LOGGER.error(exception.getMessage());
+        return createHttpResponse(INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
+    }
+
     @ExceptionHandler(InvalidTokenException.class)
     public ResponseEntity<HttpResponse> InvalidTokenErrorException(InvalidTokenException exception) {
-        LOGGER.error(exception.getMessage());
         return createHttpResponse(FORBIDDEN, exception.getMessage());
     }
 

@@ -57,13 +57,15 @@ public class UserServiceImpl implements UserService {
         if (user == null)
             throw new InvalidCredentialsException();
 
-        authenticate(loginUser.getPassword(), user.getPassword());
+        authenticate(user,loginUser.getPassword());
         HttpHeaders jwtHeaders = getJwtHeader(user);
         return new ResponseEntity<>(user, jwtHeaders, HttpStatus.OK);
     }
 
-    private void authenticate(String password, String hashedPassword) {
-        securityService.verifyPassword(password, hashedPassword);
+    private void authenticate(User user, String rawPassword) {
+        securityService.verifyPassword(rawPassword, user.getPassword());
+        securityService.isActive(user);
+        securityService.isNotLocked(user);
     }
 
     @Override

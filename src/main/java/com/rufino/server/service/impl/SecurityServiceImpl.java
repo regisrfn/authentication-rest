@@ -1,6 +1,9 @@
 package com.rufino.server.service.impl;
 
+import com.rufino.server.exception.domain.AccountDisabledException;
+import com.rufino.server.exception.domain.AccountLockedException;
 import com.rufino.server.exception.domain.InvalidCredentialsException;
+import com.rufino.server.model.User;
 import com.rufino.server.service.SecurityService;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,6 +25,20 @@ public class SecurityServiceImpl implements SecurityService {
         boolean ok = passwordEncoder.matches(password, hashedPassword);
         if (!ok)
             throw new InvalidCredentialsException();
+    }
+
+    @Override
+    public boolean isNotLocked(User user) {
+        if (user.isLocked())
+            throw new AccountLockedException();
+        return true;
+    }
+
+    @Override
+    public boolean isActive(User user) {
+        if (!user.isActive())
+            throw new AccountDisabledException();
+        return true;
     }
 
 }

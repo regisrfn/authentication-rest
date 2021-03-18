@@ -9,7 +9,6 @@ import com.rufino.server.model.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,11 +16,13 @@ public class UserService {
 
     private UserDao userDao;
     private JwtTokenService jwtTokenService;
+    private SecurityService securityService;
 
     @Autowired
-    public UserService(UserDao userDao, JwtTokenService jwtTokenService) {
+    public UserService(UserDao userDao, JwtTokenService jwtTokenService, SecurityService securityService) {
         this.userDao = userDao;
         this.jwtTokenService = jwtTokenService;
+        this.securityService = securityService;
     }
 
     public User register(User user) {
@@ -92,8 +93,7 @@ public class UserService {
     }
 
     private void encodePassword(User user) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        String hashedPassword = securityService.encodePassword(user.getPassword());
         user.setPassword(hashedPassword);
     }
 }

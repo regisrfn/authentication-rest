@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.rufino.server.domain.HttpResponse;
+import com.rufino.server.exception.domain.InvalidCredentialsException;
 import com.rufino.server.exception.domain.InvalidTokenException;
 
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 @ControllerAdvice
-public class ApiHandlerException implements ErrorController{
+public class ApiHandlerException implements ErrorController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     public static final String ERROR_PATH = "/error";
 
@@ -67,6 +68,11 @@ public class ApiHandlerException implements ErrorController{
     public ResponseEntity<HttpResponse> noHandlerFoundException(NoHandlerFoundException e) {
         LOGGER.error(e.getMessage());
         return createHttpResponse(BAD_REQUEST, "There is no mapping for this URL");
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<HttpResponse> BadCredentialsException(InvalidCredentialsException e) {
+        return createHttpResponse(BAD_REQUEST, e.getMessage());
     }
 
     ///////////////////////////// PRIVATE //////////////////////////////////////

@@ -84,13 +84,13 @@ public class ApiHandlerException implements ErrorController {
     ///////////////////////////// PRIVATE //////////////////////////////////////
     private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message) {
         return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus,
-                httpStatus.getReasonPhrase().toUpperCase(), message.toUpperCase()), httpStatus);
+                httpStatus.getReasonPhrase().toUpperCase(), message), httpStatus);
     }
 
     private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message,
             Map<String, String> errors) {
         return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus,
-                httpStatus.getReasonPhrase().toUpperCase(), message.toUpperCase(), errors), httpStatus);
+                httpStatus.getReasonPhrase().toUpperCase(), message, errors), httpStatus);
     }
 
     private ResponseEntity<HttpResponse> handleSqlError(DataIntegrityViolationException e) {
@@ -111,7 +111,7 @@ public class ApiHandlerException implements ErrorController {
             break;
         case "uk_user_username":
             errorMap.put("username", EMAIL_NOT_AVAILABLE);
-            response = createHttpResponse(BAD_REQUEST, USERNAME_NOT_AVAILABLE);
+            response = createHttpResponse(BAD_REQUEST, USERNAME_NOT_AVAILABLE, errorMap);
             break;
         default:
             response = createHttpResponse(INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);

@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.rufino.server.constant.ExceptionConst;
 import com.rufino.server.model.User;
 
 import org.hamcrest.core.Is;
@@ -24,6 +23,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static com.rufino.server.constant.SecurityConst.JWT_TOKEN_HEADER;
+import static com.rufino.server.constant.ExceptionConst.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -63,14 +63,14 @@ public class PostRequestTests {
                 mockMvc.perform(post("/api/v1/user/register").contentType(MediaType.APPLICATION_JSON)
                                 .content(my_obj.toString()))
                                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors.email",
-                                                Is.is(ExceptionConst.INVALID_EMAIL_FORMAT)))
+                                                Is.is(INVALID_EMAIL_FORMAT)))
                                 .andExpect(status().isBadRequest()).andReturn();
 
                 my_obj.put("userEmail", "joegmail.com");
                 mockMvc.perform(post("/api/v1/user/register").contentType(MediaType.APPLICATION_JSON)
                                 .content(my_obj.toString()))
                                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors.email",
-                                                Is.is(ExceptionConst.INVALID_EMAIL_FORMAT)))
+                                                Is.is(INVALID_EMAIL_FORMAT)))
                                 .andExpect(status().isBadRequest()).andReturn();
 
         }
@@ -91,7 +91,28 @@ public class PostRequestTests {
                 mockMvc.perform(post("/api/v1/user/register").contentType(MediaType.APPLICATION_JSON)
                                 .content(my_obj.toString()))
                                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors.email",
-                                                Is.is(ExceptionConst.EMAIL_NOT_AVAILABLE)))
+                                                Is.is(EMAIL_NOT_AVAILABLE)))
+                                .andExpect(status().isBadRequest()).andReturn();
+
+        }
+
+        @Test
+        void itShouldNotSaveUser_usernmaeAlreadyExists() throws Exception {
+                JSONObject my_obj = new JSONObject();
+
+                saveUserAndCheck(my_obj);
+
+                my_obj = new JSONObject();
+                my_obj.put("firstName", "John");
+                my_obj.put("lastName", "Doe");
+                my_obj.put("username", "joe123");
+                my_obj.put("password", "secret123");
+                my_obj.put("email", "joe2@gmail.com");
+
+                mockMvc.perform(post("/api/v1/user/register").contentType(MediaType.APPLICATION_JSON)
+                                .content(my_obj.toString()))
+                                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.username",
+                                                Is.is(EMAIL_NOT_AVAILABLE)))
                                 .andExpect(status().isBadRequest()).andReturn();
 
         }
@@ -112,6 +133,37 @@ public class PostRequestTests {
                 assertThat(response.getUsername()).isEqualTo("joe123");
                 assertThat(response.getEmail()).isEqualTo("joe@gmail.com");
                 assertThat(mvcResult.getResponse().getHeader(JWT_TOKEN_HEADER)).isNotBlank();
+
+        }
+
+        @Test
+        void itShouldNotLoginUser_incorrectPassword() throws Exception {
+                JSONObject my_obj = new JSONObject();
+                saveUserAndCheck(my_obj);
+
+                my_obj = new JSONObject();
+                my_obj.put("username", "joe123");
+                my_obj.put("password", "secret1234");
+
+                mockMvc.perform(post("/api/v1/user/login").contentType(MediaType.APPLICATION_JSON)
+                                .content(my_obj.toString()))
+                                .andExpect(MockMvcResultMatchers.jsonPath("$.message",
+                                                Is.is(INCORRECT_CREDENTIALS)))
+                                .andExpect(status().isBadRequest()).andReturn();
+
+        }
+
+        @Test
+        void itShouldNotLoginUser_userNUll() throws Exception {
+                JSONObject my_obj = new JSONObject();
+                saveUserAndCheck(my_obj);
+
+                my_obj = new JSONObject();
+                mockMvc.perform(post("/api/v1/user/login").contentType(MediaType.APPLICATION_JSON)
+                                .content(my_obj.toString()))
+                                .andExpect(MockMvcResultMatchers.jsonPath("$.message",
+                                                Is.is(INCORRECT_CREDENTIALS)))
+                                .andExpect(status().isBadRequest()).andReturn();
 
         }
 

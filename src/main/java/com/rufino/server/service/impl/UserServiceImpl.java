@@ -10,6 +10,7 @@ import com.rufino.server.exception.ApiRequestException;
 import com.rufino.server.exception.domain.InvalidCredentialsException;
 import com.rufino.server.model.User;
 import com.rufino.server.service.JwtTokenService;
+import com.rufino.server.service.LoginCacheService;
 import com.rufino.server.service.SecurityService;
 import com.rufino.server.service.UserService;
 
@@ -26,12 +27,15 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
     private SecurityService securityService;
     private JwtTokenService jwtTokenService;
+    private LoginCacheService loginCacheService;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, SecurityService securityService, JwtTokenService jwtTokenService) {
+    public UserServiceImpl(UserDao userDao, SecurityService securityService, JwtTokenService jwtTokenService,
+            LoginCacheService loginCacheService) {
         this.userDao = userDao;
         this.securityService = securityService;
         this.jwtTokenService = jwtTokenService;
+        this.loginCacheService = loginCacheService;
     }
 
     @Override
@@ -57,15 +61,17 @@ public class UserServiceImpl implements UserService {
         if (user == null)
             throw new InvalidCredentialsException();
 
-        authenticate(user,loginUser.getPassword());
+        authenticate(user, loginUser.getPassword());
         HttpHeaders jwtHeaders = getJwtHeader(user);
         return new ResponseEntity<>(user, jwtHeaders, HttpStatus.OK);
     }
 
     private void authenticate(User user, String rawPassword) {
-        securityService.verifyPassword(rawPassword, user.getPassword());
+        validateLoginOrLock(user);
         securityService.isActive(user);
         securityService.isNotLocked(user);
+        securityService.verifyPassword(rawPassword, user.getPassword());
+        userDao.updateUser(user);
     }
 
     @Override
@@ -135,5 +141,14 @@ public class UserServiceImpl implements UserService {
         HttpHeaders headers = new HttpHeaders();
         headers.add(JWT_TOKEN_HEADER, jwtTokenService.createToken(user));
         return headers;
+    }
+
+    private void validateLoginOrLock(User user) {
+        if (!user.isLocked()) {
+            if (loginCacheService.hasExceededMaxAttempts(user.getUsername()))
+                user.setLocked(true);
+        } else {
+            loginCacheService.evictUserFromLoginCache(user.getUsername());
+        }
     }
 }

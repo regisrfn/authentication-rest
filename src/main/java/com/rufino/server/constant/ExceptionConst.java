@@ -18,5 +18,7 @@ public class ExceptionConst {
     public static final String INVALID_PASSWORD_FORMAT = "Please enter a valid password";
     
     public static final String BAD_REQUEST_MSG = "Request contains invalid fields";
+    public static final String LOGIN_ATTEMPT_ERROR_MSG = "An error occurred while trying login user"; 
+    
     
 }

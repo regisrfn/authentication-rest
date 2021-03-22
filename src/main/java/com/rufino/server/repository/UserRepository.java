@@ -23,8 +23,8 @@ public class UserRepository implements UserDao {
     }
 
     @Override
-    public User insertUser(User User) {
-        return jpaDataAccess.save(User);
+    public User insertUser(User user) {
+        return jpaDataAccess.save(user);
     }
 
     @Override
@@ -49,9 +49,9 @@ public class UserRepository implements UserDao {
     }
 
     @Override
-    public User updateUser(UUID id, User User) {
-        User.setUserId(id);
-        return jpaDataAccess.save(User);
+    public User updateUser(UUID id, User user) {
+        user.setUserId(id);
+        return jpaDataAccess.save(user);
     }
 
     @Override
@@ -62,5 +62,10 @@ public class UserRepository implements UserDao {
     @Override
     public User getUserByUsername(String username) {
         return jpaDataAccess.findByUsername(username);
+    }
+
+    @Override
+    public User updateUser(User user) {
+        return jpaDataAccess.save(user);
     }
 }

@@ -20,9 +20,9 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public void verifyPassword(String password, String hashedPassword) {
+    public void verifyPassword(User user, String notEncodedPassword) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        boolean ok = passwordEncoder.matches(password, hashedPassword);
+        boolean ok = passwordEncoder.matches(notEncodedPassword, user.getPassword());
         if (!ok)
             throw new InvalidCredentialsException();
     }

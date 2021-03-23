@@ -66,11 +66,11 @@ public class UserServiceImpl implements UserService {
         return new ResponseEntity<>(user, jwtHeaders, HttpStatus.OK);
     }
 
-    private void authenticate(User user, String rawPassword) {
+    private void authenticate(User user, String notEncodedPassword) {
         validateLoginOrLock(user);
         securityService.isActive(user);
         securityService.isNotLocked(user);
-        securityService.verifyPassword(rawPassword, user.getPassword());
+        securityService.verifyPassword(user, notEncodedPassword);
         userDao.updateUser(user);
     }
 

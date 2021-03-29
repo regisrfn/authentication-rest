@@ -18,7 +18,7 @@ public interface UserService {
 
     public boolean deleteUserById(String id);
 
-    public User updateUser(String id, User user);
+    public User updateUser(User user);
 
     public User getUserByEmail(String email);
 

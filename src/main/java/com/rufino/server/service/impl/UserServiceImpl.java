@@ -116,13 +116,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(String id, User user) {
-        try {
-            UUID userId = UUID.fromString(id);
-            return userDao.updateUser(userId, user);
-        } catch (IllegalArgumentException e) {
-            throw new ApiRequestException("Invalid User UUID format", HttpStatus.BAD_REQUEST);
-        }
+    public User updateUser(User user) {
+        return userDao.updateUser(user);
     }
 
     @Override

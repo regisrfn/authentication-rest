@@ -2,7 +2,6 @@ package com.rufino.server.model;
 
 import static com.rufino.server.enumeration.Role.ROLE_USER;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -74,7 +73,7 @@ public class User {
 
     public User() {
         setUserId(UUID.randomUUID());
-        setCreatedAt(ZonedDateTime.now(ZoneId.of("Z")));
+        setCreatedAt(ZonedDateTime.now());
         setActive(true);
         setLocked(false);
         setRole(ROLE_USER);

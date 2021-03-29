@@ -1,6 +1,5 @@
 package com.rufino.server.domain;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Map;
 
@@ -21,7 +20,7 @@ public class HttpResponse {
     private HttpStatus httpStatus;
     private String message, reason;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSZ")
     private ZonedDateTime timestamp;
     private Map<String, String> errors;
 
@@ -31,7 +30,7 @@ public class HttpResponse {
         this.httpStatus = httpStatus;
         this.message = message;
         this.reason = reason;
-        this.timestamp = ZonedDateTime.now(ZoneId.of("Z"));
+        this.timestamp = ZonedDateTime.now();
     }
 
     public HttpResponse(int httpStatusCode, HttpStatus httpStatus, String reason, String message,
@@ -41,12 +40,12 @@ public class HttpResponse {
         this.httpStatus = httpStatus;
         this.message = message;
         this.reason = reason;
-        this.timestamp = ZonedDateTime.now(ZoneId.of("Z"));
+        this.timestamp = ZonedDateTime.now();
         this.errors = errors;
     }
 
     public HttpResponse() {
-        this.timestamp = ZonedDateTime.now(ZoneId.of("Z"));
+        this.timestamp = ZonedDateTime.now();
     }
 
 }

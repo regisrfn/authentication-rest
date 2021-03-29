@@ -1,6 +1,9 @@
 package com.rufino.server.service.impl;
 
+import static com.rufino.server.constant.SecurityConst.DEFAULT_PASSWORD_LENGTH;
 import static com.rufino.server.constant.SecurityConst.JWT_TOKEN_HEADER;
+
+import static com.rufino.server.constant.EmailConst.NEW_PASSWORD_MSG;
 
 import java.util.List;
 import java.util.UUID;
@@ -9,11 +12,13 @@ import com.rufino.server.dao.UserDao;
 import com.rufino.server.exception.ApiRequestException;
 import com.rufino.server.exception.domain.InvalidCredentialsException;
 import com.rufino.server.model.User;
+import com.rufino.server.service.EmailService;
 import com.rufino.server.service.JwtTokenService;
 import com.rufino.server.service.LoginCacheService;
 import com.rufino.server.service.SecurityService;
 import com.rufino.server.service.UserService;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -28,21 +33,25 @@ public class UserServiceImpl implements UserService {
     private SecurityService securityService;
     private JwtTokenService jwtTokenService;
     private LoginCacheService loginCacheService;
+    private EmailService emailService;
 
     @Autowired
     public UserServiceImpl(UserDao userDao, SecurityService securityService, JwtTokenService jwtTokenService,
-            LoginCacheService loginCacheService) {
+            LoginCacheService loginCacheService, EmailService emailService) {
         this.userDao = userDao;
         this.securityService = securityService;
         this.jwtTokenService = jwtTokenService;
         this.loginCacheService = loginCacheService;
+        this.emailService = emailService;
     }
 
     @Override
     public User register(User user) {
-        encodePassword(user);
+        String password = generatePassword();
+        user.setPassword(encodePassword(password));
         User savedUser = userDao.insertUser(user);
         savedUser.setPassword(null);
+        emailService.send(String.format(NEW_PASSWORD_MSG, user.getUsername(), password), user.getEmail());
         return savedUser;
     }
 
@@ -132,9 +141,12 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    private void encodePassword(User user) {
-        String hashedPassword = securityService.encodePassword(user.getPassword());
-        user.setPassword(hashedPassword);
+    private String encodePassword(String password) {
+        return securityService.encodePassword(password);
+    }
+
+    private String generatePassword() {
+        return RandomStringUtils.randomAlphanumeric(DEFAULT_PASSWORD_LENGTH);
     }
 
     private HttpHeaders getJwtHeader(User user) {

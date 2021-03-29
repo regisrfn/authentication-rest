@@ -15,22 +15,22 @@ import org.springframework.stereotype.Service;
 public class SecurityServiceImpl implements SecurityService {
 
     private LoginCacheService loginCacheService;
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     public SecurityServiceImpl(LoginCacheService loginCacheService) {
         this.loginCacheService = loginCacheService;
+        passwordEncoder = new BCryptPasswordEncoder();
     }
 
     @Override
     public String encodePassword(String password) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         return passwordEncoder.encode(password);
 
     }
 
     @Override
     public void verifyPassword(User user, String notEncodedPassword) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         boolean ok = passwordEncoder.matches(notEncodedPassword, user.getPassword());
         if (!ok) {
             this.loginCacheService.addUserToLoginCache(user.getUsername());

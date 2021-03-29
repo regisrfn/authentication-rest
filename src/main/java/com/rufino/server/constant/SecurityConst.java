@@ -15,6 +15,7 @@ public class SecurityConst {
     public static final String ACCESS_DENIED_MESSAGE = "Not allowed access this resource";
     public static final String OPTIONS_HTTP_METHOD = "OPTIONS";
     public static final int MAXIMUM_NUMBER_OF_ATTEMPTS = 5;
+    public static final int DEFAULT_PASSWORD_LENGTH = 12;
     public static final String[] PUBLIC_URLS = { "/api/v1/user/login", "/api/v1/user/register", "/api/v1/user/reset-password/**"};
     
 }

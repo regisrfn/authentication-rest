@@ -50,9 +50,12 @@ public class User {
     @Column(nullable = false)
     private String email;
 
+    @Column(nullable = false)
+    private String password;
+
     @NotBlank(message = "Value should not be empty")
     @Column(nullable = false)
-    private String username, password, firstName, lastName;
+    private String username, firstName, lastName;
 
     @NotNull(message = "Value should not be empty")
     @Column(columnDefinition = "timestamp with time zone")

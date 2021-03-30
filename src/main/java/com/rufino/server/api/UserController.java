@@ -66,9 +66,9 @@ public class UserController {
         return Map.of("message", "successfully operation");
     }
 
-    @PutMapping("update/{id}")
-    public User updateUser(@PathVariable String id, @Valid @RequestBody User user) {
-        return userService.updateUser(id, user);
+    @PutMapping("update")
+    public User updateUser(@Valid @RequestBody User user) {
+        return userService.updateUser(user);
     }
 
 }

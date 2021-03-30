@@ -5,6 +5,7 @@ import java.util.List;
 import com.rufino.server.model.User;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
 
@@ -23,6 +24,10 @@ public interface UserService {
     public User getUserByEmail(String email);
 
     public User getUserByNickname(String username);
+
+    public User saveUser(User user, MultipartFile image);
+
+    public User updateProfileImg(String userId, MultipartFile image);
 
 
 }

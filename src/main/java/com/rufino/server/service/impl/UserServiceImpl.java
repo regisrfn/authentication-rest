@@ -25,6 +25,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -73,14 +74,6 @@ public class UserServiceImpl implements UserService {
         authenticate(user, loginUser.getPassword());
         HttpHeaders jwtHeaders = getJwtHeader(user);
         return new ResponseEntity<>(user, jwtHeaders, HttpStatus.OK);
-    }
-
-    private void authenticate(User user, String notEncodedPassword) {
-        validateLoginOrLock(user);
-        securityService.isActive(user);
-        securityService.isNotLocked(user);
-        securityService.verifyPassword(user, notEncodedPassword);
-        userDao.updateUser(user);
     }
 
     @Override
@@ -134,6 +127,26 @@ public class UserServiceImpl implements UserService {
         if (user == null)
             throw new ApiRequestException("User not found", HttpStatus.NOT_FOUND);
         return user;
+    }
+
+    @Override
+    public User saveUser(User user, MultipartFile image) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public User updateProfileImg(String userId, MultipartFile image) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    private void authenticate(User user, String notEncodedPassword) {
+        validateLoginOrLock(user);
+        securityService.isActive(user);
+        securityService.isNotLocked(user);
+        securityService.verifyPassword(user, notEncodedPassword);
+        userDao.updateUser(user);
     }
 
     private String encodePassword(String password) {

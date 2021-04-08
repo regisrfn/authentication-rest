@@ -60,6 +60,9 @@ public class User {
     @Column(columnDefinition = "timestamp with time zone")
     private ZonedDateTime createdAt;
 
+    @Column(columnDefinition = "timestamp with time zone")
+    private ZonedDateTime lastLoginDate;
+
     @NotNull(message = "Value should not be empty")
     private boolean isActive, isLocked;
 

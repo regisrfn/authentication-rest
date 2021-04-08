@@ -5,6 +5,7 @@ import static com.rufino.server.constant.SecurityConst.JWT_TOKEN_HEADER;
 
 import static com.rufino.server.constant.EmailConst.NEW_PASSWORD_MSG;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -146,6 +147,7 @@ public class UserServiceImpl implements UserService {
         securityService.isActive(user);
         securityService.isNotLocked(user);
         securityService.verifyPassword(user, notEncodedPassword);
+        user.setLastLoginDate(ZonedDateTime.now());
         userDao.updateUser(user);
     }
 

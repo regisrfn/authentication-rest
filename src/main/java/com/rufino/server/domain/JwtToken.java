@@ -1,9 +1,8 @@
 package com.rufino.server.domain;
 
+import static com.rufino.server.constant.SecurityConst.AUTHORITIES;
 import static com.rufino.server.constant.SecurityConst.EXPIRATION_TIME;
 import static com.rufino.server.constant.SecurityConst.RUFINO_LLC;
-import static com.rufino.server.constant.SecurityConst.AUTHORITIES;
-
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,6 +59,11 @@ public class JwtToken {
         return verifier.verify(jwt).getSubject();
     }
 
+    public List<String> getClaimsFromToken(String token) {
+        JWTVerifier verifier = getVerifier();
+        return verifier.verify(token).getClaim(AUTHORITIES).asList(String.class);
+    }
+    
     //////////////////////////// PRIVATE////////////////
     private boolean verifyJwtToken(String token) {
         JWTVerifier verifier = getVerifier();

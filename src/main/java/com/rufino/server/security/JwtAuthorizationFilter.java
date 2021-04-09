@@ -4,17 +4,22 @@ import static com.rufino.server.constant.SecurityConst.OPTIONS_HTTP_METHOD;
 import static com.rufino.server.constant.SecurityConst.TOKEN_PREFIX;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.rufino.server.exception.ApiRequestException;
 import com.rufino.server.service.JwtTokenService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -40,7 +45,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             }
             String token = authorizationHeader.substring(TOKEN_PREFIX.length());
             String username = jwtTokenService.getUsername(token);
-            jwtTokenService.verifyToken(username, token);
+
+            try {
+                jwtTokenService.verifyToken(token, username);
+                List<GrantedAuthority> authoritiesList = jwtTokenService.getGrantedAuthorities(token);
+                Authentication authUser = jwtTokenService.getAuthentication(username, authoritiesList, request);
+                SecurityContextHolder.getContext().setAuthentication(authUser);
+            } catch (ApiRequestException e) {
+                SecurityContextHolder.clearContext();
+            }
+            filterChain.doFilter(request, response);
         }
 
     }

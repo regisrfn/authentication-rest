@@ -1,11 +1,11 @@
 package com.rufino.server;
 
+import static com.rufino.server.constant.SecurityConst.FORBIDDEN_MESSAGE;
+import static com.rufino.server.constant.SecurityConst.JWT_TOKEN_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
-import static com.rufino.server.constant.SecurityConst.JWT_TOKEN_HEADER;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +17,7 @@ import com.rufino.server.model.User;
 import com.rufino.server.service.LoginCacheService;
 import com.rufino.server.service.SecurityService;
 
+import org.hamcrest.core.Is;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -75,6 +77,14 @@ public class GetUsersListTests {
                 .asList(objectMapper.readValue(result.getResponse().getContentAsString(), User[].class));
 
         assertThat(usersList.size()).isEqualTo(2);
+    }
+
+    @Test
+    public void itShouldNotGetUsersList_NotAuthenticated() throws Exception{
+        mockMvc.perform(get("/api/v1/user/get"))
+                .andExpect(status().isForbidden())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message",Is.is(FORBIDDEN_MESSAGE)))
+                .andReturn();        
     }
 
     private List<User> createDefaultUserList() {

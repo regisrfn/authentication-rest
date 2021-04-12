@@ -27,7 +27,6 @@ import com.rufino.server.enumeration.Role;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @Entity
@@ -66,7 +65,7 @@ public class User {
     @NotNull(message = "Value should not be empty")
     private boolean isActive, isLocked;
 
-    @NotNull(message = "Value should not be empty")
+    @NotNull(message = "Invalid role value")
     private Role role;
 
     private UUID info;
@@ -80,7 +79,6 @@ public class User {
         setActive(true);
         setLocked(false);
         setRole(ROLE_USER);
-        setAuthorityList(ROLE_USER.getAuthorities());
         this.userNo = (long) Math.floor(100E3 + Math.random() * 899999);
     }
 
@@ -95,5 +93,19 @@ public class User {
         this.authorityList = aList.stream().map(auth -> {
             return new AuthorityModel(auth);
         }).collect(Collectors.toList());
+    }
+
+    public void setRole(String role) {
+        try {
+            this.role = Role.valueOf(role);
+            setAuthorityList(this.role.getAuthorities());
+        } catch (Exception e) {
+            this.role = null;
+        }
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+        setAuthorityList(this.role.getAuthorities());
     }
 }

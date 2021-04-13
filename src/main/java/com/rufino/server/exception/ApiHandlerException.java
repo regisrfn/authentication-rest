@@ -1,7 +1,14 @@
 package com.rufino.server.exception;
 
-import static com.rufino.server.constant.ExceptionConst.*;
-import static org.springframework.http.HttpStatus.*;
+import static com.rufino.server.constant.ExceptionConst.BAD_REQUEST_MSG;
+import static com.rufino.server.constant.ExceptionConst.EMAIL_NOT_AVAILABLE;
+import static com.rufino.server.constant.ExceptionConst.INTERNAL_SERVER_ERROR_MSG;
+import static com.rufino.server.constant.ExceptionConst.NOT_ENOUGH_PERMISSION;
+import static com.rufino.server.constant.ExceptionConst.USERNAME_NOT_AVAILABLE;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +25,7 @@ import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,6 +55,7 @@ public class ApiHandlerException implements ErrorController {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpResponse> internalServerErrorException(Exception exception) {
         LOGGER.error(exception.getMessage());
+        exception.printStackTrace();
         return createHttpResponse(INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
     }
 
@@ -79,6 +88,11 @@ public class ApiHandlerException implements ErrorController {
     @ExceptionHandler(AccountLockedException.class)
     public ResponseEntity<HttpResponse> AccountLockedErrorException(AccountLockedException exception) {
         return createHttpResponse(UNAUTHORIZED, exception.getMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<HttpResponse> accessDeniedException() {
+        return createHttpResponse(FORBIDDEN, NOT_ENOUGH_PERMISSION);
     }
 
     ///////////////////////////// PRIVATE //////////////////////////////////////

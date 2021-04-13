@@ -8,7 +8,7 @@ public class ExceptionConst {
     public static final String INCORRECT_CREDENTIALS = "Username / password incorrect. Please try again";
     public static final String ACCOUNT_DISABLED = "Your account has been disabled. If this is an error, please contact administration";
     public static final String ERROR_PROCESSING_FILE = "Error occurred while processing file";
-    public static final String NOT_ENOUGH_PERMISSION = "You do not have enough permission";
+    public static final String NOT_ENOUGH_PERMISSION = "Not enough permission";
     
     public static final String EMAIL_NOT_AVAILABLE = "Email has already been taken";
     public static final String USERNAME_NOT_AVAILABLE = "Username has already been taken";

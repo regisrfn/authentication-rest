@@ -1,5 +1,7 @@
 package com.rufino.server;
 
+import static com.rufino.server.constant.ExceptionConst.NOT_ENOUGH_PERMISSION;
+import static com.rufino.server.constant.SecurityConst.FORBIDDEN_MESSAGE;
 import static com.rufino.server.constant.SecurityConst.JWT_TOKEN_HEADER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -59,6 +61,30 @@ public class DeleteUserByIdTests {
                                                 Is.is("successfully operation")))
                                   .andExpect(status().isOk())
                                   .andReturn();
+    }
+
+    @Test
+    public void itShouldNotDeleteUserById_NotAuthenticated() throws Exception{
+        User user = createNewUser("arnaldo@gmail.com", "arnaldo123", "arnaldo", "rocha", "ROLE_HR");
+        mockMvc.perform(delete("/api/v1/user/delete/" + user.getUserId()))
+                .andExpect(status().isForbidden())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message",Is.is(FORBIDDEN_MESSAGE)))
+                .andReturn();        
+    }
+
+    @Test
+    public void itShouldNotDeleteUserById_NotAllowed() throws Exception{
+        User userHr = createNewUser("john@gmail.com", "john123", "John", "Doe", "ROLE_HR");
+        User user = createNewUser("arnaldo@gmail.com", "arnaldo123", "arnaldo", "rocha", "ROLE_USER");
+
+        String jwt = loginUser(userHr.getUsername(),userHr.getPassword());
+
+         mockMvc.perform(delete("/api/v1/user/delete/" + user.getUserId())
+                                  .header("Authorization", "Bearer " + jwt))
+                                  .andExpect(MockMvcResultMatchers.jsonPath("$.message",
+                                                Is.is(NOT_ENOUGH_PERMISSION)))
+                                  .andExpect(status().isForbidden())
+                                  .andReturn();     
     }
 
     private User createSuperAdmin() {

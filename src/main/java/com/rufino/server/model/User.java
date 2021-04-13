@@ -70,7 +70,10 @@ public class User {
 
     private UUID info;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(targetEntity = AuthorityModel.class, cascade = {CascadeType.PERSIST, 
+                                                                CascadeType.DETACH,
+                                                                CascadeType.MERGE,
+                                                                CascadeType.REFRESH} )
     private List<AuthorityModel> authorityList;
 
     public User() {

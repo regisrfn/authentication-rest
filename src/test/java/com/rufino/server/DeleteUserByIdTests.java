@@ -1,11 +1,15 @@
 package com.rufino.server;
 
+import static com.rufino.server.constant.ExceptionConst.INVALID_USER_ID;
 import static com.rufino.server.constant.ExceptionConst.NOT_ENOUGH_PERMISSION;
+import static com.rufino.server.constant.ExceptionConst.USER_NOT_FOUND;
 import static com.rufino.server.constant.SecurityConst.FORBIDDEN_MESSAGE;
 import static com.rufino.server.constant.SecurityConst.JWT_TOKEN_HEADER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.UUID;
 
 import com.rufino.server.dao.UserDao;
 import com.rufino.server.model.User;
@@ -85,6 +89,33 @@ public class DeleteUserByIdTests {
                                                 Is.is(NOT_ENOUGH_PERMISSION)))
                                   .andExpect(status().isForbidden())
                                   .andReturn();     
+    }
+
+    @Test
+    void itShouldNotDeleteUserById_invalidFormat() throws Exception{
+        User admin = createSuperAdmin();
+        String jwt = loginUser(admin.getUsername(),admin.getPassword());
+
+        mockMvc.perform(delete("/api/v1/user/delete/" + "abc")
+                                  .header("Authorization", "Bearer " + jwt))
+                                  .andExpect(MockMvcResultMatchers.jsonPath("$.message",
+                                                Is.is(INVALID_USER_ID)))
+                                  .andExpect(status().isBadRequest())
+                                  .andReturn();
+    }
+
+
+    @Test
+    void itShouldNotDeleteUserById_userNotExists() throws Exception{
+        User admin = createSuperAdmin();
+        String jwt = loginUser(admin.getUsername(),admin.getPassword());
+
+        mockMvc.perform(delete("/api/v1/user/delete/" + UUID.randomUUID())
+                                  .header("Authorization", "Bearer " + jwt))
+                                  .andExpect(MockMvcResultMatchers.jsonPath("$.message",
+                                                Is.is(USER_NOT_FOUND)))
+                                  .andExpect(status().isNotFound())
+                                  .andReturn();
     }
 
     private User createSuperAdmin() {

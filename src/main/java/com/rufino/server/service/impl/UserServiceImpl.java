@@ -5,6 +5,10 @@ import static com.rufino.server.constant.SecurityConst.JWT_TOKEN_HEADER;
 
 import static com.rufino.server.constant.EmailConst.NEW_PASSWORD_MSG;
 
+import static com.rufino.server.constant.ExceptionConst.INVALID_USER_ID;
+import static com.rufino.server.constant.ExceptionConst.USER_NOT_FOUND;
+
+
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -23,7 +27,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import static org.springframework.http.HttpStatus.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -74,7 +78,7 @@ public class UserServiceImpl implements UserService {
 
         authenticate(user, loginUser.getPassword());
         HttpHeaders jwtHeaders = getJwtHeader(user);
-        return new ResponseEntity<>(user, jwtHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(user, jwtHeaders, OK);
     }
 
     @Override
@@ -88,10 +92,10 @@ public class UserServiceImpl implements UserService {
             UUID userId = UUID.fromString(id);
             User user = userDao.getUser(userId);
             if (user == null)
-                throw new ApiRequestException("User not found", HttpStatus.NOT_FOUND);
+                throw new ApiRequestException(USER_NOT_FOUND, NOT_FOUND);
             return user;
         } catch (IllegalArgumentException e) {
-            throw new ApiRequestException("Invalid User UUID format", HttpStatus.BAD_REQUEST);
+            throw new ApiRequestException(INVALID_USER_ID, BAD_REQUEST);
         }
 
     }
@@ -102,10 +106,10 @@ public class UserServiceImpl implements UserService {
             UUID userId = UUID.fromString(id);
             boolean ok = userDao.deleteUser(userId);
             if (!ok)
-                throw new ApiRequestException("User not found", HttpStatus.NOT_FOUND);
+                throw new ApiRequestException(USER_NOT_FOUND, NOT_FOUND);
             return ok;
         } catch (IllegalArgumentException e) {
-            throw new ApiRequestException("Invalid User UUID format", HttpStatus.BAD_REQUEST);
+            throw new ApiRequestException(INVALID_USER_ID, BAD_REQUEST);
         }
     }
 
@@ -118,7 +122,7 @@ public class UserServiceImpl implements UserService {
     public User getUserByEmail(String email) {
         User user = userDao.getUserByEmail(email);
         if (user == null)
-            throw new ApiRequestException("User not found", HttpStatus.NOT_FOUND);
+            throw new ApiRequestException(USER_NOT_FOUND, NOT_FOUND);
         return user;
     }
 
@@ -126,7 +130,7 @@ public class UserServiceImpl implements UserService {
     public User getUserByNickname(String username) {
         User user = userDao.getUserByUsername(username);
         if (user == null)
-            throw new ApiRequestException("User not found", HttpStatus.NOT_FOUND);
+            throw new ApiRequestException(USER_NOT_FOUND, NOT_FOUND);
         return user;
     }
 

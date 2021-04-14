@@ -33,7 +33,6 @@ public class UserRepository implements UserDao {
             jpaDataAccess.deleteById(id);
             return true;
         } catch (EmptyResultDataAccessException e) {
-            e.printStackTrace();
             return false;
         }
     }

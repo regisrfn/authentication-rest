@@ -16,9 +16,15 @@ public class ExceptionConst {
     public static final String INVALID_EMAIL_FORMAT = "Invalid email address";
     public static final String INVALID_USERNAME_FORMAT = "Please enter a valid username";
     public static final String INVALID_PASSWORD_FORMAT = "Please enter a valid password";
+    public static final String INVALID_USER_ID = "Invalid user ID format";
+
+    public static final String USER_NOT_FOUND = "User was not founded";
+
+
     
     public static final String BAD_REQUEST_MSG = "Request contains invalid fields";
-    public static final String LOGIN_ATTEMPT_ERROR_MSG = "An error occurred while trying login user"; 
+    public static final String LOGIN_ATTEMPT_ERROR_MSG = "An error occurred while trying login user";
+    
     
     
 }

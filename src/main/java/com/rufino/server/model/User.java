@@ -100,9 +100,10 @@ public class User {
 
     public void setRole(String role) {
         try {
-            this.role = Role.valueOf(role);
+            this.role = Role.valueOf(role.toUpperCase());
             setAuthorityList(this.role.getAuthorities());
         } catch (Exception e) {
+            e.printStackTrace();
             this.role = null;
         }
     }

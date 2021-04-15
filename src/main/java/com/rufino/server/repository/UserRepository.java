@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.rufino.server.dao.UserDao;
+import com.rufino.server.exception.domain.UserNotFoundException;
 import com.rufino.server.dao.JpaDao;
 import com.rufino.server.model.User;
 
@@ -64,7 +65,12 @@ public class UserRepository implements UserDao {
     }
 
     @Override
-    public User updateUser(User user) {
+    public User updateUser(User user) throws UserNotFoundException {
+        try {
+            jpaDataAccess.findById(user.getUserId()).orElseThrow();
+        } catch (Exception e) {
+            throw new UserNotFoundException();
+        }
         return jpaDataAccess.save(user);
     }
 }

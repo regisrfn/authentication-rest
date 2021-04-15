@@ -3,6 +3,7 @@ package com.rufino.server.dao;
 import java.util.List;
 import java.util.UUID;
 
+import com.rufino.server.exception.domain.UserNotFoundException;
 import com.rufino.server.model.User;
 
 public interface UserDao {
@@ -20,5 +21,5 @@ public interface UserDao {
 
     User updateUser(UUID id, User User);
 
-    User updateUser(User User);
+    User updateUser(User User) throws UserNotFoundException;
 }

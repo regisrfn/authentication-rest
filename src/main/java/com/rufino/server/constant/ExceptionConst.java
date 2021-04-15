@@ -18,7 +18,7 @@ public class ExceptionConst {
     public static final String INVALID_PASSWORD_FORMAT = "Please enter a valid password";
     public static final String INVALID_USER_ID = "Invalid user ID format";
 
-    public static final String USER_NOT_FOUND = "User was not founded";
+    public static final String USER_NOT_FOUND = "User not found";
 
 
     

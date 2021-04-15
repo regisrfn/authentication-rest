@@ -5,27 +5,35 @@ import static com.rufino.server.constant.ExceptionConst.EMAIL_NOT_AVAILABLE;
 import static com.rufino.server.constant.ExceptionConst.INTERNAL_SERVER_ERROR_MSG;
 import static com.rufino.server.constant.ExceptionConst.NOT_ENOUGH_PERMISSION;
 import static com.rufino.server.constant.ExceptionConst.USERNAME_NOT_AVAILABLE;
+import static com.rufino.server.constant.ExceptionConst.METHOD_IS_NOT_ALLOWED;
+
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import com.rufino.server.domain.HttpResponse;
 import com.rufino.server.exception.domain.AccountDisabledException;
 import com.rufino.server.exception.domain.AccountLockedException;
 import com.rufino.server.exception.domain.InvalidCredentialsException;
 import com.rufino.server.exception.domain.InvalidTokenException;
+import com.rufino.server.exception.domain.UserNotFoundException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -93,6 +101,17 @@ public class ApiHandlerException implements ErrorController {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<HttpResponse> accessDeniedException() {
         return createHttpResponse(FORBIDDEN, NOT_ENOUGH_PERMISSION);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<HttpResponse> userNotFoundException(UserNotFoundException exception) {
+        return createHttpResponse(NOT_FOUND, exception.getMessage());
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<HttpResponse> methodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
+        HttpMethod supportedMethod = Objects.requireNonNull(exception.getSupportedHttpMethods()).iterator().next();
+        return createHttpResponse(METHOD_NOT_ALLOWED, String.format(METHOD_IS_NOT_ALLOWED, supportedMethod));
     }
 
     ///////////////////////////// PRIVATE //////////////////////////////////////

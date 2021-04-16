@@ -47,7 +47,7 @@ public class DeleteUserByIdTests {
     @BeforeEach
     void clearTable() {
         loginCacheService.clearAll();
-        jdbcTemplate.update("DELETE FROM users_authority_list");
+        jdbcTemplate.update("DELETE FROM users_authorities");
         jdbcTemplate.update("DELETE FROM users");
         jdbcTemplate.update("DELETE FROM authorities");
     }

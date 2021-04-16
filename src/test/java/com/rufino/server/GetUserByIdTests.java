@@ -44,8 +44,9 @@ public class GetUserByIdTests {
     @BeforeEach
     void clearTable() {
         loginCacheService.clearAll();
-        jdbcTemplate.update("DELETE FROM users_authority_list");
+        jdbcTemplate.update("DELETE FROM users_authorities");
         jdbcTemplate.update("DELETE FROM users");
+        jdbcTemplate.update("DELETE FROM authorities");
     }
 
     @Test
@@ -59,7 +60,7 @@ public class GetUserByIdTests {
         mockMvc.perform(get("/api/v1/user/get/" + user.getUserId())
                                   .header("Authorization", "Bearer " + jwt))
                                   .andExpect(MockMvcResultMatchers.jsonPath("$.email",Is.is("arnaldo@gmail.com")))
-                                  .andExpect(MockMvcResultMatchers.jsonPath("$.authorityList",Is.is(List.of("READ","UPDATE"))))
+                                  .andExpect(MockMvcResultMatchers.jsonPath("$.authorities",Is.is(List.of("READ","UPDATE"))))
                                   .andExpect(status().isOk())
                                   .andReturn();
 

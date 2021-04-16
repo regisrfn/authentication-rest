@@ -69,6 +69,7 @@ public class UserController {
     }
 
     @PostMapping("update")
+    @PreAuthorize("hasAnyAuthority('UPDATE')")
     public User updateUser(@Valid @RequestBody User user) {
         return userService.updateUser(user);
     }

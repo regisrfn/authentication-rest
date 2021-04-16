@@ -1,5 +1,7 @@
 package com.rufino.server;
 
+import static com.rufino.server.constant.ExceptionConst.NOT_ENOUGH_PERMISSION;
+import static com.rufino.server.constant.SecurityConst.FORBIDDEN_MESSAGE;
 import static com.rufino.server.constant.SecurityConst.JWT_TOKEN_HEADER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -11,6 +13,7 @@ import com.rufino.server.model.User;
 import com.rufino.server.service.LoginCacheService;
 import com.rufino.server.service.SecurityService;
 
+import org.hamcrest.core.Is;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 
 @SpringBootTest
@@ -49,7 +53,7 @@ public class UpdateUserTests {
 
     @Test
     void itShouldUpdateUser() throws Exception{
-        User manager = createSuperAdmin();
+        User manager = createManager();
         String jwt = loginUser(manager.getUsername(),manager.getPassword());
 
         User user = createNewUser("arnaldo@gmail.com", "arnaldo123", "arnaldo", "rocha", "ROLE_HR");
@@ -66,13 +70,60 @@ public class UpdateUserTests {
                     .andReturn();
     }
 
-    private User createSuperAdmin() {
+    @Test
+    public void itShouldNotUpdateUser_NotAuthenticated() throws Exception{
+        User user = createNewUser("arnaldo@gmail.com", "arnaldo123", "arnaldo", "rocha", "ROLE_HR");
+
+        String jsonUser = objectMapper.writeValueAsString(user);
+        JSONObject updatedUser = new JSONObject(jsonUser);
+        updatedUser.put("role", "ROLE_USER");
+
+        mockMvc.perform(post("/api/v1/user/update/")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(updatedUser.toString()))
+                    .andExpect(status().isForbidden())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.message",Is.is(FORBIDDEN_MESSAGE)))
+                    .andReturn();       
+    }
+
+    @Test
+    public void itShouldNotUpdateUser_notEnoughPermission() throws Exception{    
+        User defaultUser = createDefaultUser();
+        String jwt = loginUser(defaultUser.getUsername(),defaultUser.getPassword());
+
+        User user = createNewUser("arnaldo@gmail.com", "arnaldo123", "arnaldo", "rocha", "ROLE_HR");
+
+        String jsonUser = objectMapper.writeValueAsString(user);
+        JSONObject updatedUser = new JSONObject(jsonUser);
+        updatedUser.put("role", "ROLE_USER");
+
+        mockMvc.perform(post("/api/v1/user/update/")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(updatedUser.toString())
+                                .header("Authorization", "Bearer " + jwt))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.message",
+                        Is.is(NOT_ENOUGH_PERMISSION)))
+                    .andExpect(status().isForbidden())
+                    .andReturn(); 
+    }
+
+    private User createManager() {
         User user = new User();
         user.setEmail("john@gmail.com");
         user.setUsername("john123");
         user.setFirstName("John");
         user.setLastName("Doe");
         user.setRole("ROLE_MANAGER");
+        user.setPassword(securityService.encodePassword("secret123"));
+        return userDao.insertUser(user);
+    }
+
+    private User createDefaultUser() {
+        User user = new User();
+        user.setEmail("john@gmail.com");
+        user.setUsername("john123");
+        user.setFirstName("John");
+        user.setLastName("Doe");
         user.setPassword(securityService.encodePassword("secret123"));
         return userDao.insertUser(user);
     }

@@ -73,7 +73,7 @@ public class JwtToken {
 
     private String[] getClaimsFromUser(User user) {
         List<String> authorities = new ArrayList<>();
-        for (Authority grantedAuthority : user.getAuthorityList())
+        for (Authority grantedAuthority : user.getAuthorities())
             authorities.add(grantedAuthority.name());
         return authorities.toArray(new String[0]);
     }

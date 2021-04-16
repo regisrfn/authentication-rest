@@ -18,6 +18,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.rufino.server.constraints.EmailConstraint;
@@ -34,7 +35,7 @@ import lombok.Setter;
         @UniqueConstraint(columnNames = "email", name = "uk_user_email"),
         @UniqueConstraint(columnNames = "username", name = "uk_user_username") 
 })
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_NULL)
 public class User {
 
@@ -74,7 +75,7 @@ public class User {
                                                                 CascadeType.DETACH,
                                                                 CascadeType.MERGE,
                                                                 CascadeType.REFRESH} )
-    private List<AuthorityModel> authorityList;
+    private List<AuthorityModel> authorities;
 
     public User() {
         setUserId(UUID.randomUUID());
@@ -85,15 +86,17 @@ public class User {
         this.userNo = (long) Math.floor(100E3 + Math.random() * 899999);
     }
 
-    public List<Authority> getAuthorityList() {
-        return this.authorityList.stream().map(auth -> {
+    public void setAuthorities(Authority... authorities){}
+
+    public List<Authority> getAuthorities() {
+        return this.authorities.stream().map(auth -> {
             return auth.getAuthority();
         }).collect(Collectors.toList());
     }
 
-    public void setAuthorityList(Authority... authorities) {
+    public void setAuthoritiesList(Authority... authorities) {
         List<Authority> aList = Arrays.asList(authorities);
-        this.authorityList = aList.stream().map(auth -> {
+        this.authorities = aList.stream().map(auth -> {
             return new AuthorityModel(auth);
         }).collect(Collectors.toList());
     }
@@ -101,7 +104,7 @@ public class User {
     public void setRole(String role) {
         try {
             this.role = Role.valueOf(role.toUpperCase());
-            setAuthorityList(this.role.getAuthorities());
+            setAuthoritiesList(this.role.getAuthorities());
         } catch (Exception e) {
             e.printStackTrace();
             this.role = null;
@@ -110,6 +113,6 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
-        setAuthorityList(this.role.getAuthorities());
+        setAuthoritiesList(this.role.getAuthorities());
     }
 }

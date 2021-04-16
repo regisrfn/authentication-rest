@@ -116,7 +116,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(User user) {
         User updated = user;
-        updated.setRole(user.getRole());
         userDao.updateUser(updated);
         updated.setPassword(null);
         return updated;

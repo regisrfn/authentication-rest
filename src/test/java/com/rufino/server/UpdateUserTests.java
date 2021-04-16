@@ -46,7 +46,7 @@ public class UpdateUserTests {
     @BeforeEach
     void clearTable() {
         loginCacheService.clearAll();
-        jdbcTemplate.update("DELETE FROM users_authority_list");
+        jdbcTemplate.update("DELETE FROM users_authorities");
         jdbcTemplate.update("DELETE FROM users");
         jdbcTemplate.update("DELETE FROM authorities");
     }
@@ -105,6 +105,27 @@ public class UpdateUserTests {
                         Is.is(NOT_ENOUGH_PERMISSION)))
                     .andExpect(status().isForbidden())
                     .andReturn(); 
+    }
+
+    @Test
+    void itShouldNotUpdateUser_RoleNotEnough() throws Exception{
+        User manager = createManager();
+        String jwt = loginUser(manager.getUsername(),manager.getPassword());
+
+        User user = createNewUser("arnaldo@gmail.com", "arnaldo123", "arnaldo", "rocha", "ROLE_SUPER_ADMIN");
+
+        String jsonUser = objectMapper.writeValueAsString(user);
+        JSONObject updatedUser = new JSONObject(jsonUser);
+        updatedUser.put("role", "ROLE_USER");
+
+        mockMvc.perform(post("/api/v1/user/update/")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(updatedUser.toString())
+                                .header("Authorization", "Bearer " + jwt))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.message",
+                        Is.is(NOT_ENOUGH_PERMISSION)))
+                    .andExpect(status().isForbidden())
+                    .andReturn();
     }
 
     private User createManager() {

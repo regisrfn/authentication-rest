@@ -1,13 +1,15 @@
 package com.rufino.server.service.impl;
 
+import static com.rufino.server.constant.EmailConst.NEW_PASSWORD_MSG;
+import static com.rufino.server.constant.ExceptionConst.INVALID_USER_ID;
+import static com.rufino.server.constant.ExceptionConst.NOT_ENOUGH_PERMISSION;
+import static com.rufino.server.constant.ExceptionConst.USER_NOT_FOUND;
 import static com.rufino.server.constant.SecurityConst.DEFAULT_PASSWORD_LENGTH;
 import static com.rufino.server.constant.SecurityConst.JWT_TOKEN_HEADER;
-
-import static com.rufino.server.constant.EmailConst.NEW_PASSWORD_MSG;
-
-import static com.rufino.server.constant.ExceptionConst.INVALID_USER_ID;
-import static com.rufino.server.constant.ExceptionConst.USER_NOT_FOUND;
-
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -27,7 +29,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import static org.springframework.http.HttpStatus.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -114,9 +115,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(User user) {
+    public User updateUser(User user, String jwt) {
+        verifyRole(user, jwt);
         User updated = user;
-        userDao.updateUser(updated);
+        updated = userDao.updateUser(updated);
         updated.setPassword(null);
         return updated;
     }
@@ -179,5 +181,14 @@ public class UserServiceImpl implements UserService {
         } else {
             loginCacheService.evictUserFromLoginCache(user.getUsername());
         }
+    }
+
+    private void verifyRole(User user, String jwt) {
+        String username = jwtTokenService.getUsername(jwt);
+        User authenticatedUser = userDao.getUserByUsername(username);
+        User updatingUser = userDao.getUser(user.getUserId());
+
+        if(authenticatedUser.getRole().ordinal() < updatingUser.getRole().ordinal())
+            throw new ApiRequestException(NOT_ENOUGH_PERMISSION, FORBIDDEN);
     }
 }

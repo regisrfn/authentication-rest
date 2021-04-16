@@ -1,5 +1,7 @@
 package com.rufino.server.api;
 
+import static com.rufino.server.constant.SecurityConst.TOKEN_PREFIX;
+
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +11,7 @@ import com.rufino.server.model.User;
 import com.rufino.server.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -70,8 +74,9 @@ public class UserController {
 
     @PostMapping("update")
     @PreAuthorize("hasAnyAuthority('UPDATE')")
-    public User updateUser(@Valid @RequestBody User user) {
-        return userService.updateUser(user);
+    public User updateUser(@Valid @RequestBody User user, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
+        String token = authorizationHeader.substring(TOKEN_PREFIX.length());
+        return userService.updateUser(user,token);
     }
 
 }

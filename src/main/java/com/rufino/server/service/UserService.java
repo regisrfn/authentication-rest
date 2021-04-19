@@ -23,7 +23,7 @@ public interface UserService {
 
     public User getUserByEmail(String email);
 
-    public User getUserByNickname(String username);
+    public User getUserByUsername(String username);
 
     public User saveUser(User user, MultipartFile image);
 

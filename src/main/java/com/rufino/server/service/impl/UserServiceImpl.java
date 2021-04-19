@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByNickname(String username) {
+    public User getUserByUsername(String username) {
         User user = userDao.getUserByUsername(username);
         if (user == null)
             throw new ApiRequestException(USER_NOT_FOUND, NOT_FOUND);

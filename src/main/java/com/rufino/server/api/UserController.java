@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import com.rufino.server.model.User;
 import com.rufino.server.service.UserService;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -60,8 +61,13 @@ public class UserController {
     }
 
     @GetMapping("select")
-    public User getUserByEmail(@RequestParam(name = "email") String email) {
-        return userService.getUserByEmail(email);
+    public User selectUser(@RequestParam(name = "email", required = false) String email,
+                               @RequestParam(name = "username", required = false) String username) 
+    {
+        if (StringUtils.isNotBlank(username))
+            return userService.getUserByUsername(username);
+        else
+            return userService.getUserByEmail(email); 
     }
 
     @DeleteMapping("delete/{id}")
@@ -74,9 +80,11 @@ public class UserController {
 
     @PostMapping("update")
     @PreAuthorize("hasAnyAuthority('UPDATE')")
-    public User updateUser(@Valid @RequestBody User user, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
+    public User updateUser(@Valid @RequestBody User user,
+                                  @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
+
         String token = authorizationHeader.substring(TOKEN_PREFIX.length());
-        return userService.updateUser(user,token);
+        return userService.updateUser(user, token);
     }
 
 }

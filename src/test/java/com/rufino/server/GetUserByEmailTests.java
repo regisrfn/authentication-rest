@@ -2,6 +2,7 @@ package com.rufino.server;
 
 import static com.rufino.server.constant.SecurityConst.FORBIDDEN_MESSAGE;
 import static com.rufino.server.constant.SecurityConst.JWT_TOKEN_HEADER;
+import static com.rufino.server.constant.ExceptionConst.USER_NOT_FOUND;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -84,11 +85,10 @@ public class GetUserByEmailTests {
         createNewUser("arnaldo@gmail.com", "arnaldo123", "arnaldo", "rocha", "ROLE_HR");
 
         mockMvc.perform(get("/api/v1/user/select?email=arnaldo2@gmail.com")
-                                  .header("Authorization", "Bearer " + jwt))
-                                  .andExpect(MockMvcResultMatchers.jsonPath("$.email",Is.is("arnaldo@gmail.com")))
-                                  .andExpect(MockMvcResultMatchers.jsonPath("$.authorities",Is.is(List.of("READ","UPDATE"))))
-                                  .andExpect(status().isOk())
-                                  .andReturn();
+                                .header("Authorization", "Bearer " + jwt))
+                    .andExpect(status().isNotFound())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.message",Is.is(USER_NOT_FOUND)))
+                    .andReturn(); 
 
     }
 

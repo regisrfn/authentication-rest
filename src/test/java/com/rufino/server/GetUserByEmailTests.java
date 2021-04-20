@@ -1,5 +1,6 @@
 package com.rufino.server;
 
+import static com.rufino.server.constant.SecurityConst.FORBIDDEN_MESSAGE;
 import static com.rufino.server.constant.SecurityConst.JWT_TOKEN_HEADER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -57,6 +58,32 @@ public class GetUserByEmailTests {
         User user = createNewUser("arnaldo@gmail.com", "arnaldo123", "arnaldo", "rocha", "ROLE_HR");
 
         mockMvc.perform(get("/api/v1/user/select?email=" + user.getEmail())
+                                  .header("Authorization", "Bearer " + jwt))
+                                  .andExpect(MockMvcResultMatchers.jsonPath("$.email",Is.is("arnaldo@gmail.com")))
+                                  .andExpect(MockMvcResultMatchers.jsonPath("$.authorities",Is.is(List.of("READ","UPDATE"))))
+                                  .andExpect(status().isOk())
+                                  .andReturn();
+
+    }
+
+    @Test
+    public void itShouldNotGetUserByEmail_NotAuthenticated() throws Exception{
+        User user = createNewUser("arnaldo@gmail.com", "arnaldo123", "arnaldo", "rocha", "ROLE_HR");
+        mockMvc.perform(get("/api/v1/user/select?email=" + user.getEmail()))
+                .andExpect(status().isForbidden())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message",Is.is(FORBIDDEN_MESSAGE)))
+                .andReturn();        
+    }
+
+    @Test
+    void itShouldGetUserByEmail_userNotFound() throws Exception {
+
+        User defaultUser = createDefaultUser();
+        String jwt = loginUser(defaultUser.getUsername(),defaultUser.getPassword());
+
+        createNewUser("arnaldo@gmail.com", "arnaldo123", "arnaldo", "rocha", "ROLE_HR");
+
+        mockMvc.perform(get("/api/v1/user/select?email=arnaldo2@gmail.com")
                                   .header("Authorization", "Bearer " + jwt))
                                   .andExpect(MockMvcResultMatchers.jsonPath("$.email",Is.is("arnaldo@gmail.com")))
                                   .andExpect(MockMvcResultMatchers.jsonPath("$.authorities",Is.is(List.of("READ","UPDATE"))))

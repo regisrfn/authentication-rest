@@ -64,15 +64,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<User> login(User loginUser) {
-        User user = null;
 
-        if (StringUtils.isNotBlank(loginUser.getUsername())) {
-            user = userDao.getUserByUsername(loginUser.getUsername());
-        } else if (StringUtils.isBlank(loginUser.getEmail()))
-            throw new InvalidCredentialsException();
-        else {
-            user = userDao.getUserByEmail(loginUser.getEmail());
-        }
+        User user = getUserByEmailOrUsername(loginUser);
 
         if (user == null)
             throw new InvalidCredentialsException();
@@ -190,5 +183,18 @@ public class UserServiceImpl implements UserService {
 
         if(authenticatedUser.getRole().ordinal() < updatingUser.getRole().ordinal())
             throw new ApiRequestException(NOT_ENOUGH_PERMISSION, FORBIDDEN);
+    }
+
+    private User getUserByEmailOrUsername(User loginUser) {
+        User user = null;
+
+        if (StringUtils.isNotBlank(loginUser.getUsername())) {
+            user = userDao.getUserByUsername(loginUser.getUsername());
+        } else if (StringUtils.isBlank(loginUser.getEmail()))
+            throw new InvalidCredentialsException();
+        else {
+            user = userDao.getUserByEmail(loginUser.getEmail());
+        }
+        return user;
     }
 }

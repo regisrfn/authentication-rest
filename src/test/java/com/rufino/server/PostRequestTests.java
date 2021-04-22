@@ -53,12 +53,12 @@ public class PostRequestTests {
         private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
         @BeforeEach
-    void clearTable() {
-        loginCacheService.clearAll();
-        jdbcTemplate.update("DELETE FROM users_authorities");
-        jdbcTemplate.update("DELETE FROM users");
-        jdbcTemplate.update("DELETE FROM authorities");
-    }
+        void clearTable() {
+                loginCacheService.clearAll();
+                jdbcTemplate.update("DELETE FROM users_authorities");
+                jdbcTemplate.update("DELETE FROM users");
+                jdbcTemplate.update("DELETE FROM authorities");
+        }
 
         @Test
         void itShouldSaveUser() throws Exception {
@@ -221,7 +221,7 @@ public class PostRequestTests {
                 return result;
         }
 
-        private User createDefaultUser(){
+        private User createDefaultUser() {
                 User user = new User();
                 user.setEmail("john@gmail.com");
                 user.setUsername("john123");
@@ -229,5 +229,5 @@ public class PostRequestTests {
                 user.setLastName("Doe");
                 user.setPassword(securityService.encodePassword("secret123"));
                 return userDao.insertUser(user);
-            }
+        }
 }

@@ -52,6 +52,8 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    private String profileImageUrl;
+
     @NotBlank(message = "Value should not be empty")
     @Column(nullable = false)
     private String username, firstName, lastName;

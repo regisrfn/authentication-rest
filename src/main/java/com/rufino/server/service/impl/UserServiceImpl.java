@@ -133,8 +133,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User saveUser(User user, MultipartFile image) {
-        // TODO Auto-generated method stub
+    public User saveUser(User user, MultipartFile file) {
+        String password = generatePassword();
+        String url = uploadImage(file);
+
+        user.setPassword(encodePassword(password));
+        user.setProfileImageUrl(url);
+
+        User savedUser = userDao.insertUser(user);
+        savedUser.setPassword(null);
+        emailService.send(
+            String.format(
+                NEW_PASSWORD_MSG, 
+                user.getUsername(), 
+                password), 
+            user.getEmail());
+
+        return savedUser;
+    }
+
+    private String uploadImage(MultipartFile image) {
         return null;
     }
 

@@ -25,9 +25,9 @@ public interface UserService {
 
     public User getUserByUsername(String username);
 
-    public User saveUser(User user, MultipartFile image);
+    public User saveUser(User user, MultipartFile file);
 
-    public User updateProfileImg(String userId, MultipartFile image);
+    public User updateProfileImg(String userId, MultipartFile file);
 
 
 }

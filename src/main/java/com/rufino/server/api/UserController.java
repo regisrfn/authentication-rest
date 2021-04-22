@@ -25,7 +25,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("api/v1/user")
@@ -40,7 +42,7 @@ public class UserController {
     }
 
     @PostMapping("register")
-    public ResponseEntity<Object> saveUser(@Valid @RequestBody User user) {
+    public ResponseEntity<Object> registerUser(@Valid @RequestBody User user) {
         User userSaved = userService.register(user);
         return new ResponseEntity<>(userSaved, HttpStatus.OK);
     }
@@ -81,10 +83,18 @@ public class UserController {
     @PostMapping("update")
     @PreAuthorize("hasAnyAuthority('UPDATE')")
     public User updateUser(@Valid @RequestBody User user,
-                                  @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
-
+                                  @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) 
+    {
         String token = authorizationHeader.substring(TOKEN_PREFIX.length());
         return userService.updateUser(user, token);
+    }
+
+    @PreAuthorize("hasAnyAuthority('WRITE')")
+    @PostMapping("save")
+    public User saveUser(@RequestPart("user") @Valid User user, 
+                         @RequestParam("file") MultipartFile file) 
+    {   
+        return userService.saveUser(user, file);
     }
 
 }

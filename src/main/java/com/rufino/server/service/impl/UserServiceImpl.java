@@ -20,6 +20,7 @@ import com.rufino.server.exception.ApiRequestException;
 import com.rufino.server.exception.domain.InvalidCredentialsException;
 import com.rufino.server.model.User;
 import com.rufino.server.service.EmailService;
+import com.rufino.server.service.FileUploadService;
 import com.rufino.server.service.JwtTokenService;
 import com.rufino.server.service.LoginCacheService;
 import com.rufino.server.service.SecurityService;
@@ -41,15 +42,22 @@ public class UserServiceImpl implements UserService {
     private JwtTokenService jwtTokenService;
     private LoginCacheService loginCacheService;
     private EmailService emailService;
+    private FileUploadService fileUpload;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, SecurityService securityService, JwtTokenService jwtTokenService,
-            LoginCacheService loginCacheService, EmailService emailService) {
+    public UserServiceImpl(UserDao userDao, 
+            SecurityService securityService, 
+            JwtTokenService jwtTokenService,
+            LoginCacheService loginCacheService, 
+            EmailService emailService,
+            FileUploadService fileUpload) 
+    {
         this.userDao = userDao;
         this.securityService = securityService;
         this.jwtTokenService = jwtTokenService;
         this.loginCacheService = loginCacheService;
         this.emailService = emailService;
+        this.fileUpload = fileUpload;
     }
 
     @Override
@@ -58,7 +66,12 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encodePassword(password));
         User savedUser = userDao.insertUser(user);
         savedUser.setPassword(null);
-        emailService.send(String.format(NEW_PASSWORD_MSG, user.getUsername(), password), user.getEmail());
+        emailService.send(
+            String.format(
+                NEW_PASSWORD_MSG, 
+                user.getUsername(), 
+                password), 
+            user.getEmail());
         return savedUser;
     }
 
@@ -152,10 +165,6 @@ public class UserServiceImpl implements UserService {
         return savedUser;
     }
 
-    private String uploadImage(MultipartFile image) {
-        return null;
-    }
-
     @Override
     public User updateProfileImg(String userId, MultipartFile image) {
         // TODO Auto-generated method stub
@@ -214,5 +223,9 @@ public class UserServiceImpl implements UserService {
             user = userDao.getUserByEmail(loginUser.getEmail());
         }
         return user;
+    }
+
+    private String uploadImage(MultipartFile image) {
+        return fileUpload.upload(image).getUrl();
     }
 }

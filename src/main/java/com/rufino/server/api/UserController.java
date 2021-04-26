@@ -97,4 +97,12 @@ public class UserController {
         return userService.saveUser(user, file);
     }
 
+    @PreAuthorize("hasAnyAuthority('UPDATE')")
+    @PostMapping("update-profile/{id}")
+    public User updateProfile(@PathVariable String id,
+                              @RequestParam("file") MultipartFile file) 
+    {
+        return userService.updateProfileImg(id, file);
+    }
+
 }

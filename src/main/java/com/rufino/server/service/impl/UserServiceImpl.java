@@ -166,9 +166,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateProfileImg(String userId, MultipartFile image) {
-        // TODO Auto-generated method stub
-        return null;
+    public User updateProfileImg(String userId, MultipartFile file) {
+        try {
+            UUID id = UUID.fromString(userId);
+            User user = userDao.getUser(id);
+
+            if (user == null)
+                throw new ApiRequestException(USER_NOT_FOUND, NOT_FOUND);
+            
+            String url = uploadImage(file);
+            user.setProfileImageUrl(url);
+            user.setPassword(null);
+            
+            return user;
+        } catch (IllegalArgumentException e) {
+            throw new ApiRequestException(INVALID_USER_ID, BAD_REQUEST);
+        }
     }
 
     private void authenticate(User user, String notEncodedPassword) {

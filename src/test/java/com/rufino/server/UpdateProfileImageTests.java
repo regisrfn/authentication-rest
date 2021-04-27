@@ -1,5 +1,6 @@
 package com.rufino.server;
 
+import static com.rufino.server.constant.SecurityConst.FORBIDDEN_MESSAGE;
 import static com.rufino.server.constant.SecurityConst.JWT_TOKEN_HEADER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -13,6 +14,7 @@ import com.rufino.server.model.User;
 import com.rufino.server.service.LoginCacheService;
 import com.rufino.server.service.SecurityService;
 
+import org.hamcrest.core.Is;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,6 +69,21 @@ public class UpdateProfileImageTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
+    }
+
+    @Test
+    public void itShouldNotUpdateUser_NotAuthenticated() throws Exception{
+        User user = createDefaultUser();
+
+        MockMultipartFile file = new MockMultipartFile(
+            "file", "index.jpeg", MediaType.IMAGE_JPEG_VALUE,
+            new FileInputStream(new File("index.jpeg")));
+
+            mockMvc.perform(multipart("/api/v1/user/update-profile/" + user.getUserId())
+                                .file(file))
+                    .andExpect(status().isForbidden())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.message",Is.is(FORBIDDEN_MESSAGE)))
+                    .andReturn();     
     }
 
     private User createDefaultUser() {

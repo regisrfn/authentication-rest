@@ -28,7 +28,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-
 @SpringBootTest
 @AutoConfigureMockMvc
 public class UpdateProfileImageTests {
@@ -55,35 +54,31 @@ public class UpdateProfileImageTests {
     @Test
     void itShouldUpdateUser() throws Exception {
         User user = createDefaultUser();
-        String jwt = loginUser(user.getUsername(),"secret123");   
+        String jwt = loginUser(user.getUsername(), "secret123");
 
-        MockMultipartFile file = new MockMultipartFile(
-            "file", "index.jpeg", MediaType.IMAGE_JPEG_VALUE,
-            new FileInputStream(new File("index.jpeg")));
+        MockMultipartFile file = new MockMultipartFile("file", "index.jpeg", MediaType.IMAGE_JPEG_VALUE,
+                new FileInputStream(new File("index.jpeg")));
 
-        mockMvc.perform(multipart("/api/v1/user/update-profile/" + user.getUserId())
-                            .file(file)
-                            .header("Authorization", "Bearer " + jwt)
-                        )
-                .andExpect(MockMvcResultMatchers.jsonPath("$.profileImageUrl").exists())
-                .andExpect(status().isOk())
-                .andReturn();
+        mockMvc.perform(multipart("/api/v1/user/update-profile/" + user.getUserId()).file(file).header("Authorization",
+                "Bearer " + jwt)).andExpect(MockMvcResultMatchers.jsonPath("$.profileImageUrl").exists())
+                .andExpect(status().isOk()).andReturn();
+
+        mockMvc.perform(multipart("/api/v1/user/update-profile/" + user.getUserId()).file(file).header("Authorization",
+                "Bearer " + jwt)).andExpect(MockMvcResultMatchers.jsonPath("$.profileImageUrl").exists())
+                .andExpect(status().isOk()).andReturn();
 
     }
 
     @Test
-    public void itShouldNotUpdateUser_NotAuthenticated() throws Exception{
+    public void itShouldNotUpdateUser_NotAuthenticated() throws Exception {
         User user = createDefaultUser();
 
-        MockMultipartFile file = new MockMultipartFile(
-            "file", "index.jpeg", MediaType.IMAGE_JPEG_VALUE,
-            new FileInputStream(new File("index.jpeg")));
+        MockMultipartFile file = new MockMultipartFile("file", "index.jpeg", MediaType.IMAGE_JPEG_VALUE,
+                new FileInputStream(new File("index.jpeg")));
 
-            mockMvc.perform(multipart("/api/v1/user/update-profile/" + user.getUserId())
-                                .file(file))
-                    .andExpect(status().isForbidden())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.message",Is.is(FORBIDDEN_MESSAGE)))
-                    .andReturn();     
+        mockMvc.perform(multipart("/api/v1/user/update-profile/" + user.getUserId()).file(file))
+                .andExpect(status().isForbidden())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Is.is(FORBIDDEN_MESSAGE))).andReturn();
     }
 
     private User createDefaultUser() {
@@ -110,5 +105,5 @@ public class UpdateProfileImageTests {
         String jwt = mvcResult.getResponse().getHeader(JWT_TOKEN_HEADER);
 
         return jwt;
-    }    
+    }
 }

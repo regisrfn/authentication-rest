@@ -178,12 +178,14 @@ public class UserServiceImpl implements UserService {
             String oldProfileImage = user.getProfileImageUrl();
 
             user.setProfileImageUrl(newUrl);
-            user.setPassword(null);
+            User updatedUser = userDao.updateUser(user);
+
+            updatedUser.setPassword(null);
 
             if (StringUtils.isNotBlank(oldProfileImage))
                 deleteImage(oldProfileImage);
 
-            return user;
+            return updatedUser;
         } catch (IllegalArgumentException e) {
             throw new ApiRequestException(INVALID_USER_ID, BAD_REQUEST);
         }

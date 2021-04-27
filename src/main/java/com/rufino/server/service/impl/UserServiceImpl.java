@@ -173,11 +173,16 @@ public class UserServiceImpl implements UserService {
 
             if (user == null)
                 throw new ApiRequestException(USER_NOT_FOUND, NOT_FOUND);
-            
-            String url = uploadImage(file);
-            user.setProfileImageUrl(url);
+
+            String newUrl = uploadImage(file);
+            String oldProfileImage = user.getProfileImageUrl();
+
+            user.setProfileImageUrl(newUrl);
             user.setPassword(null);
-            
+
+            if (StringUtils.isNotBlank(oldProfileImage))
+                deleteImage(oldProfileImage);
+
             return user;
         } catch (IllegalArgumentException e) {
             throw new ApiRequestException(INVALID_USER_ID, BAD_REQUEST);
@@ -221,7 +226,7 @@ public class UserServiceImpl implements UserService {
         User authenticatedUser = userDao.getUserByUsername(username);
         User updatingUser = userDao.getUser(user.getUserId());
 
-        if(authenticatedUser.getRole().ordinal() < updatingUser.getRole().ordinal())
+        if (authenticatedUser.getRole().ordinal() < updatingUser.getRole().ordinal())
             throw new ApiRequestException(NOT_ENOUGH_PERMISSION, FORBIDDEN);
     }
 
@@ -240,5 +245,9 @@ public class UserServiceImpl implements UserService {
 
     private String uploadImage(MultipartFile image) {
         return fileUpload.upload(image).getUrl();
+    }
+
+    private void deleteImage(String url) {
+        fileUpload.delete(url);
     }
 }

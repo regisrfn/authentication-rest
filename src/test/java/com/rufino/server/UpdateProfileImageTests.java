@@ -52,9 +52,8 @@ public class UpdateProfileImageTests {
 
     @Test
     void itShouldUpdateUser() throws Exception {
-        User admin = createAdmin();
-        String jwt = loginUser(admin.getUsername(),"secret123");
-        User user = createNewUser("arnaldo@gmail.com", "arnaldo123", "arnaldo", "rocha", "ROLE_HR");        
+        User user = createDefaultUser();
+        String jwt = loginUser(user.getUsername(),"secret123");   
 
         MockMultipartFile file = new MockMultipartFile(
             "file", "index.jpeg", MediaType.IMAGE_JPEG_VALUE,
@@ -70,13 +69,12 @@ public class UpdateProfileImageTests {
 
     }
 
-    private User createAdmin() {
+    private User createDefaultUser() {
         User user = new User();
         user.setEmail("john@gmail.com");
         user.setUsername("john123");
         user.setFirstName("John");
         user.setLastName("Doe");
-        user.setRole("ROLE_ADMIN");
         user.setPassword(securityService.encodePassword("secret123"));
         return userDao.insertUser(user);
     }
@@ -95,17 +93,5 @@ public class UpdateProfileImageTests {
         String jwt = mvcResult.getResponse().getHeader(JWT_TOKEN_HEADER);
 
         return jwt;
-    }
-
-    private User createNewUser(String email, String username, String firstName,String lastName,String role) {
-        User user = new User();
-        user.setEmail(email);
-        user.setUsername(username);
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setPassword(securityService.encodePassword("secret123"));
-        user.setRole(role);
-        return userDao.insertUser(user);
-    }
-    
+    }    
 }

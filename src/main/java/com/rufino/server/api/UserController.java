@@ -29,8 +29,12 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+@Api("User management REST API")
 @RestController
-@RequestMapping("api/v1/user")
+@RequestMapping(path = {"/api/v1/user"})
 @CrossOrigin
 public class UserController {
 
@@ -41,27 +45,32 @@ public class UserController {
         this.userService = userService;
     }
 
+    @ApiOperation("Create a default user")
     @PostMapping("register")
-    public ResponseEntity<Object> registerUser(@Valid @RequestBody User user) {
+    public ResponseEntity<User> registerUser(@Valid @RequestBody User user) {
         User userSaved = userService.register(user);
         return new ResponseEntity<>(userSaved, HttpStatus.OK);
     }
 
+    @ApiOperation("Log in an user and return a token")
     @PostMapping("login")
     public ResponseEntity<User> login(@RequestBody User user) {
         return userService.login(user);
     }
 
+    @ApiOperation("Return all the users")
     @GetMapping("get")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
+    @ApiOperation("Return a unique user by id (UUID)")
     @GetMapping("get/{id}")
     public User getUserById(@PathVariable String id) {
         return userService.getUserById(id);
     }
 
+    @ApiOperation("Return a unique user by email or username")
     @GetMapping("select")
     public User selectUser(@RequestParam(name = "email", required = false) String email,
                                @RequestParam(name = "username", required = false) String username) 
@@ -72,6 +81,7 @@ public class UserController {
             return userService.getUserByEmail(email); 
     }
 
+    @ApiOperation("Remove a user by id (UUID)")
     @DeleteMapping("delete/{id}")
     @PreAuthorize("hasAnyAuthority('DELETE')")
     public ResponseEntity<Object> deleteUserById(@PathVariable String id) {
@@ -80,6 +90,7 @@ public class UserController {
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
+    @ApiOperation("Update user")
     @PostMapping("update")
     @PreAuthorize("hasAnyAuthority('UPDATE')")
     public User updateUser(@Valid @RequestBody User user,
@@ -89,6 +100,7 @@ public class UserController {
         return userService.updateUser(user, token);
     }
 
+    @ApiOperation("Save a new user with profile image")
     @PreAuthorize("hasAnyAuthority('WRITE')")
     @PostMapping("save")
     public User saveUser(@RequestPart("user") @Valid User user, 
@@ -97,6 +109,7 @@ public class UserController {
         return userService.saveUser(user, file);
     }
 
+    @ApiOperation("Update a user profile image")
     @PostMapping("update-profile/{id}")
     public User updateProfile(@PathVariable String id,
                               @RequestParam("file") MultipartFile file) 

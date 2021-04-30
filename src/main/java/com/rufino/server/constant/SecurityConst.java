@@ -16,6 +16,21 @@ public class SecurityConst {
     public static final String OPTIONS_HTTP_METHOD = "OPTIONS";
     public static final int MAXIMUM_NUMBER_OF_ATTEMPTS = 5;
     public static final int DEFAULT_PASSWORD_LENGTH = 12;
-    public static final String[] PUBLIC_URLS = { "/api/v1/user/login", "/api/v1/user/register", "/api/v1/user/reset-password/**"};
+    public static final String[] PUBLIC_URLS = { 
+        "/api/v1/user/login", 
+        "/api/v1/user/register", 
+        "/api/v1/user/reset-password/**",
+        // -- Swagger UI v2
+        "/v2/api-docs",
+        "/swagger-resources",
+        "/swagger-resources/**",
+        "/configuration/ui",
+        "/configuration/security",
+        "/swagger-ui.html",
+        "/webjars/**",
+        // -- Swagger UI v3 (OpenAPI)
+        "/v3/api-docs/**",
+        "/swagger-ui/**"
+    };
     
 }

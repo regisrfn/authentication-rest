@@ -1,5 +1,6 @@
 package com.rufino.server.model;
 
+import static com.rufino.server.constant.ProfileImageConst.DEFAULT_PROFILE_IMG;
 import static com.rufino.server.enumeration.Role.ROLE_USER;
 
 import java.time.ZonedDateTime;
@@ -86,6 +87,7 @@ public class User {
         setLocked(false);
         setRole(ROLE_USER);
         this.userNo = (long) Math.floor(100E3 + Math.random() * 899999);
+        setProfileImageUrl(DEFAULT_PROFILE_IMG + this.userNo);
     }
 
     public void setAuthorities(Authority... authorities){}

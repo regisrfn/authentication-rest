@@ -11,6 +11,9 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +31,8 @@ import com.rufino.server.service.UserService;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +48,9 @@ public class UserServiceImpl implements UserService {
     private LoginCacheService loginCacheService;
     private EmailService emailService;
     private FileUploadService fileUpload;
+
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
 
     @Autowired
     public UserServiceImpl(UserDao userDao, 
@@ -191,6 +199,36 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public byte[] getProfileImage(String userId) {
+        try {
+            UUID id = UUID.fromString(userId);
+            User user = userDao.getUser(id);
+
+            if (user == null)
+                throw new ApiRequestException(USER_NOT_FOUND, NOT_FOUND);
+            
+            URL url = new URL(user.getProfileImageUrl());
+            
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            
+            InputStream inputStream = url.openStream();
+            int bytesRead;
+            byte[] chunk = new byte[1024];          
+            
+            while((bytesRead=inputStream.read(chunk)) > 0){
+                byteArrayOutputStream.write(chunk, 0, bytesRead);
+            }
+
+            return byteArrayOutputStream.toByteArray();
+
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+
+    }
+
     private void authenticate(User user, String notEncodedPassword) {
         validateLoginOrLock(user);
         securityService.isActive(user);
@@ -252,4 +290,5 @@ public class UserServiceImpl implements UserService {
     private void deleteImage(String url) {
         fileUpload.delete(url);
     }
+
 }

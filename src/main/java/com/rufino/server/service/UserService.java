@@ -29,5 +29,7 @@ public interface UserService {
 
     public User updateProfileImg(String userId, MultipartFile file);
 
+    public byte[] getProfileImage(String userId);
+
 
 }

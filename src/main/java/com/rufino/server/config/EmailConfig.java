@@ -34,7 +34,7 @@ public class EmailConfig {
         props.put(TRANSPORT_PROTOCOL, "smtp");
         props.put(SMTP_AUTH, true);
         props.put(SMTP_START_TLS_ENABLE, true);
-        props.put("mail.debug", "true");
+        props.put("mail.debug", "false");
 
         return mailSender;
     }

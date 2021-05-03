@@ -17,7 +17,8 @@ public class SecurityConst {
     public static final int MAXIMUM_NUMBER_OF_ATTEMPTS = 5;
     public static final int DEFAULT_PASSWORD_LENGTH = 12;
     public static final String[] PUBLIC_URLS = { 
-        "/api/v1/user/login", 
+        "/api/v1/user/login",
+        "/api/v1/user/image/**", 
         "/api/v1/user/register", 
         "/api/v1/user/reset-password/**",
         // -- Swagger UI v2

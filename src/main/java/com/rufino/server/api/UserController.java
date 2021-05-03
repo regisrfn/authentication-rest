@@ -5,6 +5,10 @@ import static com.rufino.server.constant.SecurityConst.TOKEN_PREFIX;
 import java.util.List;
 import java.util.Map;
 
+import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
+import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
+
+
 import javax.validation.Valid;
 
 import com.rufino.server.model.User;
@@ -115,6 +119,11 @@ public class UserController {
                               @RequestParam("file") MultipartFile file) 
     {
         return userService.updateProfileImg(id, file);
+    }
+
+    @GetMapping(path = "/image/{id}", produces = {IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE})
+    public byte[] getProfileImage(@PathVariable("id") String id) {
+        return userService.getProfileImage(id);
     }
 
 }

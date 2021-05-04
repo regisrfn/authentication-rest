@@ -19,6 +19,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -53,6 +54,8 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @JsonIgnore
+    @Column(nullable = false)
     private String profileImageUrl;
 
     @NotBlank(message = "Value should not be empty")

@@ -60,13 +60,9 @@ public class UpdateProfileImageTests {
                 new FileInputStream(new File("index.jpeg")));
 
         mockMvc.perform(multipart("/api/v1/user/update-profile/" + user.getUserId()).file(file).header("Authorization",
-                "Bearer " + jwt)).andExpect(MockMvcResultMatchers.jsonPath("$.profileImageUrl").exists())
-                .andExpect(status().isOk()).andReturn();
-
-        mockMvc.perform(multipart("/api/v1/user/update-profile/" + user.getUserId()).file(file).header("Authorization",
-                "Bearer " + jwt)).andExpect(MockMvcResultMatchers.jsonPath("$.profileImageUrl").exists())
-                .andExpect(status().isOk()).andReturn();
-
+                "Bearer " + jwt))
+                .andExpect(status().isOk())
+                .andReturn();
     }
 
     @Test

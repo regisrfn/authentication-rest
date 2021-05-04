@@ -1,13 +1,11 @@
 package com.rufino.server.api;
 
 import static com.rufino.server.constant.SecurityConst.TOKEN_PREFIX;
-
-import java.util.List;
-import java.util.Map;
-
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 
+import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -25,6 +23,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -95,7 +94,7 @@ public class UserController {
     }
 
     @ApiOperation("Update user")
-    @PostMapping("update")
+    @PutMapping("update")
     @PreAuthorize("hasAnyAuthority('UPDATE')")
     public User updateUser(@Valid @RequestBody User user,
                                   @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) 

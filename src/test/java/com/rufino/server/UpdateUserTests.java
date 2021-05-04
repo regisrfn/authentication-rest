@@ -4,6 +4,7 @@ import static com.rufino.server.constant.ExceptionConst.NOT_ENOUGH_PERMISSION;
 import static com.rufino.server.constant.SecurityConst.FORBIDDEN_MESSAGE;
 import static com.rufino.server.constant.SecurityConst.JWT_TOKEN_HEADER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -62,7 +63,7 @@ public class UpdateUserTests {
         JSONObject updatedUser = new JSONObject(jsonUser);
         updatedUser.put("role", "ROLE_USER");
 
-        mockMvc.perform(post("/api/v1/user/update/")
+        mockMvc.perform(put("/api/v1/user/update/")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(updatedUser.toString())
                                 .header("Authorization", "Bearer " + jwt))
@@ -78,7 +79,7 @@ public class UpdateUserTests {
         JSONObject updatedUser = new JSONObject(jsonUser);
         updatedUser.put("role", "ROLE_USER");
 
-        mockMvc.perform(post("/api/v1/user/update/")
+        mockMvc.perform(put("/api/v1/user/update/")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(updatedUser.toString()))
                     .andExpect(status().isForbidden())
@@ -97,7 +98,7 @@ public class UpdateUserTests {
         JSONObject updatedUser = new JSONObject(jsonUser);
         updatedUser.put("role", "ROLE_USER");
 
-        mockMvc.perform(post("/api/v1/user/update/")
+        mockMvc.perform(put("/api/v1/user/update/")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(updatedUser.toString())
                                 .header("Authorization", "Bearer " + jwt))
@@ -118,7 +119,7 @@ public class UpdateUserTests {
         JSONObject updatedUser = new JSONObject(jsonUser);
         updatedUser.put("role", "ROLE_USER");
 
-        mockMvc.perform(post("/api/v1/user/update/")
+        mockMvc.perform(put("/api/v1/user/update/")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(updatedUser.toString())
                                 .header("Authorization", "Bearer " + jwt))

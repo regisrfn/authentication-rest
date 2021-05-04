@@ -3,14 +3,11 @@ package com.rufino.server;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.List;
-
 import com.rufino.server.dao.UserDao;
 import com.rufino.server.model.User;
 import com.rufino.server.service.LoginCacheService;
 import com.rufino.server.service.SecurityService;
 
-import org.hamcrest.core.Is;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 
 @SpringBootTest
@@ -50,8 +46,6 @@ public class GetImageProfileTests {
         User user = createDefaultUser();        
 
         mockMvc.perform(get("/api/v1/user/image/" + user.getUserId()))
-                                  .andExpect(MockMvcResultMatchers.jsonPath("$.email",Is.is("arnaldo@gmail.com")))
-                                  .andExpect(MockMvcResultMatchers.jsonPath("$.authorities",Is.is(List.of("READ","UPDATE"))))
                                   .andExpect(status().isOk())
                                   .andReturn();
 

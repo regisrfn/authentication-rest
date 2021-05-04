@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import com.rufino.server.model.User;
+import com.rufino.server.model.UserLogin;
 import com.rufino.server.service.UserService;
 
 import org.apache.commons.lang3.StringUtils;
@@ -57,7 +58,7 @@ public class UserController {
 
     @ApiOperation("Log in an user and return a token")
     @PostMapping("login")
-    public ResponseEntity<User> login(@RequestBody User user) {
+    public ResponseEntity<User> login(@RequestBody UserLogin user) {
         return userService.login(user);
     }
 

@@ -22,6 +22,7 @@ import com.rufino.server.dao.UserDao;
 import com.rufino.server.exception.ApiRequestException;
 import com.rufino.server.exception.domain.InvalidCredentialsException;
 import com.rufino.server.model.User;
+import com.rufino.server.model.UserLogin;
 import com.rufino.server.service.EmailService;
 import com.rufino.server.service.FileUploadService;
 import com.rufino.server.service.JwtTokenService;
@@ -84,16 +85,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<User> login(User loginUser) {
-
-        User user = getUserByEmailOrUsername(loginUser);
+    public ResponseEntity<User> login(UserLogin userLogin) {
+        
+        User login = getUserCredentials(userLogin);
+        User user = getUserByEmailOrUsername(login);
 
         if (user == null)
             throw new InvalidCredentialsException();
 
-        authenticate(user, loginUser.getPassword());
+        authenticate(user, userLogin.getPassword());
         HttpHeaders jwtHeaders = getJwtHeader(user);
         return new ResponseEntity<>(user, jwtHeaders, OK);
+    }
+
+    private User getUserCredentials(UserLogin userLogin) {
+        User user = new User();
+        user.setEmail(userLogin.getPassword());
+        user.setUsername(userLogin.getUsername());
+        return user;
     }
 
     @Override
@@ -270,15 +279,15 @@ public class UserServiceImpl implements UserService {
             throw new ApiRequestException(NOT_ENOUGH_PERMISSION, FORBIDDEN);
     }
 
-    private User getUserByEmailOrUsername(User loginUser) {
+    private User getUserByEmailOrUsername(User userLogin) {
         User user = null;
 
-        if (StringUtils.isNotBlank(loginUser.getUsername())) {
-            user = userDao.getUserByUsername(loginUser.getUsername());
-        } else if (StringUtils.isBlank(loginUser.getEmail()))
+        if (StringUtils.isNotBlank(userLogin.getUsername())) {
+            user = userDao.getUserByUsername(userLogin.getUsername());
+        } else if (StringUtils.isBlank(userLogin.getEmail()))
             throw new InvalidCredentialsException();
         else {
-            user = userDao.getUserByEmail(loginUser.getEmail());
+            user = userDao.getUserByEmail(userLogin.getEmail());
         }
         return user;
     }

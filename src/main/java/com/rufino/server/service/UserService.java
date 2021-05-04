@@ -3,6 +3,7 @@ package com.rufino.server.service;
 import java.util.List;
 
 import com.rufino.server.model.User;
+import com.rufino.server.model.UserLogin;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,7 +12,7 @@ public interface UserService {
 
     public User register(User user);
 
-    public ResponseEntity<User> login(User loginUser);
+    public ResponseEntity<User> login(UserLogin userLogin);
 
     public List<User> getAllUsers();
 

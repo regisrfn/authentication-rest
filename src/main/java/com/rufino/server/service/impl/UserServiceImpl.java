@@ -74,7 +74,6 @@ public class UserServiceImpl implements UserService {
         String password = generatePassword();
         user.setPassword(encodePassword(password));
         User savedUser = userDao.insertUser(user);
-        savedUser.setPassword(null);
         emailService.send(
             String.format(
                 NEW_PASSWORD_MSG, 
@@ -96,13 +95,6 @@ public class UserServiceImpl implements UserService {
         authenticate(user, userLogin.getPassword());
         HttpHeaders jwtHeaders = getJwtHeader(user);
         return new ResponseEntity<>(user, jwtHeaders, OK);
-    }
-
-    private User getUserCredentials(UserLogin userLogin) {
-        User user = new User();
-        user.setEmail(userLogin.getPassword());
-        user.setUsername(userLogin.getUsername());
-        return user;
     }
 
     @Override
@@ -140,10 +132,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(User user, String jwt) {
         verifyRole(user, jwt);
-        User updated = user;
-        updated = userDao.updateUser(updated);
-        updated.setPassword(null);
-        return updated;
+        return userDao.updateUser(user);
     }
 
     @Override
@@ -171,7 +160,6 @@ public class UserServiceImpl implements UserService {
         user.setProfileImageUrl(url);
 
         User savedUser = userDao.insertUser(user);
-        savedUser.setPassword(null);
         emailService.send(
             String.format(
                 NEW_PASSWORD_MSG, 
@@ -196,8 +184,6 @@ public class UserServiceImpl implements UserService {
 
             user.setProfileImageUrl(newUrl);
             User updatedUser = userDao.updateUser(user);
-
-            updatedUser.setPassword(null);
 
             if (StringUtils.isNotBlank(oldProfileImage))
                 deleteImage(oldProfileImage);
@@ -298,6 +284,13 @@ public class UserServiceImpl implements UserService {
 
     private void deleteImage(String url) {
         fileUpload.delete(url);
+    }
+
+    private User getUserCredentials(UserLogin userLogin) {
+        User user = new User();
+        user.setEmail(userLogin.getPassword());
+        user.setUsername(userLogin.getUsername());
+        return user;
     }
 
 }

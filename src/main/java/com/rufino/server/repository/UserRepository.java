@@ -67,7 +67,8 @@ public class UserRepository implements UserDao {
     @Override
     public User updateUser(User user) throws UserNotFoundException {
         try {
-            jpaDataAccess.findById(user.getUserId()).orElseThrow();
+            User oldUser = jpaDataAccess.findById(user.getUserId()).orElseThrow();
+            user.setPassword(oldUser.getPassword());
         } catch (Exception e) {
             throw new UserNotFoundException();
         }

@@ -44,9 +44,9 @@ public class User {
     @Id
     private UUID userId;
 
-    @NotNull(message = "Value should not be empty")
+    @Column(nullable = false)
     private Long userNo;
-
+    
     @EmailConstraint
     @Column(nullable = false)
     private String email;
@@ -63,14 +63,13 @@ public class User {
     @Column(nullable = false)
     private String username, firstName, lastName;
 
-    @NotNull(message = "Value should not be empty")
-    @Column(columnDefinition = "timestamp with time zone")
+    @Column(columnDefinition = "timestamp with time zone", nullable = false)
     private ZonedDateTime createdAt;
 
     @Column(columnDefinition = "timestamp with time zone")
     private ZonedDateTime lastLoginDate;
 
-    @NotNull(message = "Value should not be empty")
+    @Column(nullable = false)
     private boolean isActive, isLocked;
 
     @NotNull(message = "Invalid role value")

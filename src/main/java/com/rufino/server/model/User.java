@@ -102,25 +102,27 @@ public class User {
         }).collect(Collectors.toList());
     }
 
-    public void setAuthoritiesList(Authority... authorities) {
+    public void createAuthoritiesList(Authority... authorities) {
         List<Authority> aList = Arrays.asList(authorities);
         this.authorities = aList.stream().map(auth -> {
             return new AuthorityModel(auth);
         }).collect(Collectors.toList());
     }
 
+    public void setRole(Role role) {
+        this.role = role;
+        createAuthoritiesList(this.role.getAuthorities());
+    }
+
     public void setRole(String role) {
         try {
             this.role = Role.valueOf(role.toUpperCase());
-            setAuthoritiesList(this.role.getAuthorities());
+            createAuthoritiesList(this.role.getAuthorities());
         } catch (Exception e) {
             e.printStackTrace();
             this.role = null;
         }
     }
 
-    public void setRole(Role role) {
-        this.role = role;
-        setAuthoritiesList(this.role.getAuthorities());
-    }
+    
 }

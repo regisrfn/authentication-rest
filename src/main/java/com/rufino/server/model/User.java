@@ -118,7 +118,6 @@ public class User {
             this.role = Role.valueOf(role.toUpperCase());
             createAuthoritiesList(this.role.getAuthorities());
         } catch (Exception e) {
-            e.printStackTrace();
             this.role = null;
         }
     }

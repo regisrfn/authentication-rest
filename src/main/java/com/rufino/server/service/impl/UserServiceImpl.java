@@ -251,6 +251,7 @@ public class UserServiceImpl implements UserService {
         if (!user.isLocked()) {
             if (loginCacheService.hasExceededMaxAttempts(user.getUsername()))
                 user.setLocked(true);
+                userDao.updateUser(user);
         } else {
             loginCacheService.evictUserFromLoginCache(user.getUsername());
         }

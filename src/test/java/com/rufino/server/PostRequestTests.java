@@ -184,7 +184,7 @@ public class PostRequestTests {
         @Test
         void itShouldNotLoginUser_maxAttempts() throws Exception {
                 JSONObject my_obj = new JSONObject();
-                createDefaultUser();
+                User user = createDefaultUser();
 
                 my_obj = new JSONObject();
                 my_obj.put("username", "john123");
@@ -204,6 +204,9 @@ public class PostRequestTests {
                                 .content(my_obj.toString()))
                                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Is.is(ACCOUNT_LOCKED)))
                                 .andExpect(status().isUnauthorized()).andReturn();
+                
+                User lockedUser = userDao.getUser(user.getUserId());
+                assertThat(lockedUser.isLocked()).isTrue();
 
         }
 

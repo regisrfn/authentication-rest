@@ -5,10 +5,10 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 
+import com.rufino.server.domain.HttpResponse;
 import com.rufino.server.model.User;
 import com.rufino.server.model.UserLogin;
 import com.rufino.server.service.UserService;
@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 
 @Api("User management REST API")
 @RestController
@@ -49,75 +48,59 @@ public class UserController {
         this.userService = userService;
     }
 
-    @ApiOperation("Create a default user")
     @PostMapping("register")
     public ResponseEntity<User> registerUser(@Valid @RequestBody User user) {
         User userSaved = userService.register(user);
         return new ResponseEntity<>(userSaved, HttpStatus.OK);
     }
 
-    @ApiOperation("Log in an user and return a token")
     @PostMapping("login")
     public ResponseEntity<User> login(@RequestBody UserLogin user) {
         return userService.login(user);
     }
 
-    @ApiOperation("Return all the users")
     @GetMapping("get")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @ApiOperation("Return a unique user by id (UUID)")
     @GetMapping("get/{id}")
     public User getUserById(@PathVariable String id) {
         return userService.getUserById(id);
     }
 
-    @ApiOperation("Return a unique user by email or username")
     @GetMapping("select")
     public User selectUser(@RequestParam(name = "email", required = false) String email,
-                               @RequestParam(name = "username", required = false) String username) 
-    {
+                               @RequestParam(name = "username", required = false) String username){
+
         if (StringUtils.isNotBlank(username))
             return userService.getUserByUsername(username);
         else
             return userService.getUserByEmail(email); 
     }
 
-    @ApiOperation("Remove a user by id (UUID)")
-    @DeleteMapping("delete/{id}")
-    @PreAuthorize("hasAnyAuthority('DELETE')")
-    public ResponseEntity<Object> deleteUserById(@PathVariable String id) {
-        userService.deleteUserById(id);
-        Map<String, String> message = Map.of("message", "successfully operation");
-        return new ResponseEntity<>(message, HttpStatus.OK);
+    @DeleteMapping("delete/{id}") @PreAuthorize("hasAnyAuthority('DELETE')")
+    public ResponseEntity<HttpResponse> deleteUserById(@PathVariable String id) {
+        return userService.deleteUserById(id);
     }
 
-    @ApiOperation("Update user")
-    @PutMapping("update")
-    @PreAuthorize("hasAnyAuthority('UPDATE')")
+    @PutMapping("update") @PreAuthorize("hasAnyAuthority('UPDATE')")
     public User updateUser(@Valid @RequestBody User user,
-                                  @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) 
-    {
+                                  @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
+
         String token = authorizationHeader.substring(TOKEN_PREFIX.length());
         return userService.updateUser(user, token);
     }
 
-    @ApiOperation("Save a new user with profile image")
-    @PreAuthorize("hasAnyAuthority('WRITE')")
-    @PostMapping("save")
+    @PostMapping("save") @PreAuthorize("hasAnyAuthority('WRITE')")
     public User saveUser(@RequestPart("user") @Valid User user, 
-                         @RequestParam("file") MultipartFile file) 
-    {   
+                         @RequestParam("file") MultipartFile file) {   
         return userService.saveUser(user, file);
     }
 
-    @ApiOperation("Update a user profile image")
     @PostMapping("update-profile/{id}")
-    public User updateProfile(@PathVariable String id,
-                              @RequestParam("file") MultipartFile file) 
-    {
+    public User updateProfileImage(@PathVariable String id,
+                                   @RequestParam("file") MultipartFile file) {
         return userService.updateProfileImg(id, file);
     }
 

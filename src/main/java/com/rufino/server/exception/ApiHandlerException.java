@@ -3,21 +3,21 @@ package com.rufino.server.exception;
 import static com.rufino.server.constant.ExceptionConst.BAD_REQUEST_MSG;
 import static com.rufino.server.constant.ExceptionConst.EMAIL_NOT_AVAILABLE;
 import static com.rufino.server.constant.ExceptionConst.INTERNAL_SERVER_ERROR_MSG;
+import static com.rufino.server.constant.ExceptionConst.METHOD_IS_NOT_ALLOWED;
 import static com.rufino.server.constant.ExceptionConst.NOT_ENOUGH_PERMISSION;
 import static com.rufino.server.constant.ExceptionConst.USERNAME_NOT_AVAILABLE;
-import static com.rufino.server.constant.ExceptionConst.METHOD_IS_NOT_ALLOWED;
-
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.rufino.server.domain.HttpResponse;
 import com.rufino.server.exception.domain.AccountDisabledException;
 import com.rufino.server.exception.domain.AccountLockedException;
@@ -112,6 +112,12 @@ public class ApiHandlerException implements ErrorController {
     public ResponseEntity<HttpResponse> methodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
         HttpMethod supportedMethod = Objects.requireNonNull(exception.getSupportedHttpMethods()).iterator().next();
         return createHttpResponse(METHOD_NOT_ALLOWED, String.format(METHOD_IS_NOT_ALLOWED, supportedMethod));
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<HttpResponse> tokenExpiredException(TokenExpiredException exception) {
+        LOGGER.error(exception.getMessage());
+        return createHttpResponse(UNAUTHORIZED, "Your session has expired. Please log in again.");
     }
 
     ///////////////////////////// PRIVATE //////////////////////////////////////

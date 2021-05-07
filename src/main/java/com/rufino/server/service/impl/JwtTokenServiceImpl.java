@@ -6,14 +6,12 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.rufino.server.domain.JwtToken;
 import com.rufino.server.exception.ApiRequestException;
 import com.rufino.server.model.User;
 import com.rufino.server.service.JwtTokenService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -49,11 +47,7 @@ public class JwtTokenServiceImpl implements JwtTokenService {
 
     @Override
     public boolean verifyToken(String token, String username) {
-        try {
-            return this.jwt.isTokenValid(username, token);
-        } catch (JWTVerificationException e) {
-            throw new ApiRequestException("Could not verify token", HttpStatus.FORBIDDEN);
-        }
+        return this.jwt.isTokenValid(username, token);
     }
 
     @Override
@@ -65,10 +59,10 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     @Override
     public Authentication getAuthentication(String username, List<GrantedAuthority> authoritiesList,
             HttpServletRequest request) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                    username, null, authoritiesList);
-            usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            return usernamePasswordAuthenticationToken;
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                username, null, authoritiesList);
+        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        return usernamePasswordAuthenticationToken;
     }
 
 }

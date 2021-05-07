@@ -62,7 +62,7 @@ public class DeleteUserByIdTests {
         mockMvc.perform(delete("/api/v1/user/delete/" + user.getUserId())
                                   .header("Authorization", "Bearer " + jwt))
                                   .andExpect(MockMvcResultMatchers.jsonPath("$.message",
-                                                Is.is("successfully operation")))
+                                                Is.is("User removed successfully.")))
                                   .andExpect(status().isOk())
                                   .andReturn();
     }

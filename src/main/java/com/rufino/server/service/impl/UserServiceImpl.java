@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.rufino.server.dao.UserDao;
+import com.rufino.server.domain.HttpResponse;
 import com.rufino.server.exception.ApiRequestException;
 import com.rufino.server.exception.domain.InvalidCredentialsException;
 import com.rufino.server.model.User;
@@ -36,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -117,16 +119,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteUserById(String id) {
+    public  ResponseEntity<HttpResponse> deleteUserById(String id) {
         try {
             UUID userId = UUID.fromString(id);
             boolean ok = userDao.deleteUser(userId);
             if (!ok)
                 throw new ApiRequestException(USER_NOT_FOUND, NOT_FOUND);
-            return ok;
         } catch (IllegalArgumentException e) {
             throw new ApiRequestException(INVALID_USER_ID, BAD_REQUEST);
         }
+        return createHttpResponse(OK, "User removed successfully.");
     }
 
     @Override
@@ -292,6 +294,12 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userLogin.getPassword());
         user.setUsername(userLogin.getUsername());
         return user;
+    }
+
+    ///////////////////////////// PRIVATE //////////////////////////////////////
+    private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message) {
+        return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus,
+                httpStatus.getReasonPhrase().toUpperCase(), message), httpStatus);
     }
 
 }

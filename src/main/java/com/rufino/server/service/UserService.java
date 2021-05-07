@@ -2,6 +2,7 @@ package com.rufino.server.service;
 
 import java.util.List;
 
+import com.rufino.server.domain.HttpResponse;
 import com.rufino.server.model.User;
 import com.rufino.server.model.UserLogin;
 
@@ -18,7 +19,7 @@ public interface UserService {
 
     public User getUserById(String id);
 
-    public boolean deleteUserById(String id);
+    public ResponseEntity<HttpResponse> deleteUserById(String id);
 
     public User updateUser(User user, String jwt);
 

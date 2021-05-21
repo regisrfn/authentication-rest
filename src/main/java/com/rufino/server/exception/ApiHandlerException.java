@@ -149,7 +149,7 @@ public class ApiHandlerException implements ErrorController {
             response = createHttpResponse(BAD_REQUEST, EMAIL_NOT_AVAILABLE, errorMap);
             break;
         case "uk_user_username":
-            errorMap.put("username", EMAIL_NOT_AVAILABLE);
+            errorMap.put("username", USERNAME_NOT_AVAILABLE);
             response = createHttpResponse(BAD_REQUEST, USERNAME_NOT_AVAILABLE, errorMap);
             break;
         default:

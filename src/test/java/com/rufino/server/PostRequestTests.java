@@ -2,6 +2,7 @@ package com.rufino.server;
 
 import static com.rufino.server.constant.ExceptionConst.ACCOUNT_LOCKED;
 import static com.rufino.server.constant.ExceptionConst.EMAIL_NOT_AVAILABLE;
+import static com.rufino.server.constant.ExceptionConst.USERNAME_NOT_AVAILABLE;
 import static com.rufino.server.constant.ExceptionConst.INCORRECT_CREDENTIALS;
 import static com.rufino.server.constant.ExceptionConst.INVALID_EMAIL_FORMAT;
 import static com.rufino.server.constant.SecurityConst.JWT_TOKEN_HEADER;
@@ -128,7 +129,7 @@ public class PostRequestTests {
                 mockMvc.perform(post("/api/v1/user/register").contentType(MediaType.APPLICATION_JSON)
                                 .content(my_obj.toString()))
                                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors.username",
-                                                Is.is(EMAIL_NOT_AVAILABLE)))
+                                                Is.is(USERNAME_NOT_AVAILABLE)))
                                 .andExpect(status().isBadRequest()).andReturn();
 
         }

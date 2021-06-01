@@ -69,6 +69,7 @@ public class UserRepository implements UserDao {
         try {
             User oldUser = jpaDataAccess.findById(user.getUserId()).orElseThrow();
             user.setPassword(oldUser.getPassword());
+            user.setProfileImageUrl(oldUser.getProfileImageUrl());
         } catch (Exception e) {
             throw new UserNotFoundException();
         }

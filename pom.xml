@@ -13,7 +13,7 @@
 	<name>server</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<java.version>14</java.version>
+		<java.version>16</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -119,7 +119,7 @@
 				<version>3.0.0</version>
 				<configuration>
 					<from>
-						<image>openjdk:14</image>
+						<image>openjdk:16</image>
 					</from>
 					<container>
 						<ports>

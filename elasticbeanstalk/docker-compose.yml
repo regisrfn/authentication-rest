@@ -1,0 +1,9 @@
+version: "3.9"
+services: 
+    backend:
+        image: regisrufino/authentication_api:latest
+        ports: 
+            - "5000:5010"
+        restart: always
+        env_file:
+            - prod.env

@@ -13,7 +13,7 @@
 	<name>server</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<java.version>14</java.version>
+		<java.version>16</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -88,7 +88,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.18</version>
+			<version>1.18.20</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -119,13 +119,14 @@
 				<version>3.0.0</version>
 				<configuration>
 					<from>
-						<image>openjdk:14</image>
+						<image>openjdk:16</image>
 					</from>
 					<container>
 						<ports>
 							<port>5000</port>
 						</ports>
 						<format>OCI</format>
+						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
 					</container>
 				</configuration>
 			</plugin>

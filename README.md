@@ -16,10 +16,18 @@ docker start authentication_db
 
 #### Build application local docker image:
  - mvn clean install -DskipTests=true jib:dockerBuild -Djib.to.image=authentication_api:v1 
- - docker run --name authentication_api --env-file .env -p 5000:5000 authentication_api:v1
+ 
+#### Development
+ - docker run --name authentication_api --network="host" authentication_api:v1
+
+#### Production
+ - docker run --name authentication_api_prod --env-file .prod.env -p 5000:5010 regisrufino/authentication_api:latest
 
 #### Build application docker image (docker hub):
- - mvn clean install -DskipTests=true jib:build -Djib.to.image=regisrufino/authentication-api:latest
+ - mvn clean install -DskipTests=true jib:build -Djib.to.image=regisrufino/authentication_api:latest 
+
+#### Pull
+docker pull regisrufino/authentication_api:latest
 
 ## DATABASE DESCRIPTION
 
